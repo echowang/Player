@@ -4,17 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.danny.player.MainActivity">
+    tools:context="com.danny.player.ui.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/main_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingRight="15dp"
-        android:scrollbars="vertical"
-        android:scrollbarSize="4dp"
-        android:fadeScrollbars="false"
-        android:scrollbarThumbVertical="@mipmap/ic_launcher"
-        android:scrollbarStyle="outsideInset"/>
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

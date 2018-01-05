@@ -7,18 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.danny.media.library.model.Song;
 import com.danny.player.R;
+
+import java.util.List;
 
 /**
  * Created by dannywang on 2017/12/7.
  */
 
-public class RecyclerViewAdpter extends RecyclerView.Adapter {
-//    private Context context;
+public class MusicListAdpter extends RecyclerView.Adapter {
     private LayoutInflater layoutInflater;
+    private List<Song> songList;
 
-    public RecyclerViewAdpter(Context context){
-//        this.context = context;
+    public MusicListAdpter(Context context){
         this.layoutInflater = LayoutInflater.from(context);
     }
 
@@ -32,12 +34,30 @@ public class RecyclerViewAdpter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
-        recyclerViewHolder.setItemNameText("item postion " + position);
+
+        Song song = getItem(position);
+        recyclerViewHolder.itemBindSong(song);
+
     }
 
     @Override
     public int getItemCount() {
-        return 20;
+        return songList == null ? 0 : songList.size();
+    }
+
+    private Song getItem(int position){
+        if (songList != null && position >= 0 && position < songList.size()){
+            return songList.get(position);
+        }
+        return null;
+    }
+
+    public void setSongList(List<Song> songList){
+        if (songList == null){
+            return;
+        }
+        this.songList = songList;
+        notifyDataSetChanged();
     }
 
     public class RecyclerViewHolder extends RecyclerView.ViewHolder{
@@ -49,8 +69,11 @@ public class RecyclerViewAdpter extends RecyclerView.Adapter {
             itemNameText = (TextView) itemView.findViewById(R.id.recycler_item_name);
         }
 
-        public void setItemNameText(String text){
-            itemNameText.setText(text);
+        public void itemBindSong(Song song){
+            if (song == null){
+                return;
+            }
+            itemNameText.setText(song.getTitle());
         }
     }
 }

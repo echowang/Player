@@ -6,6 +6,7 @@ import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.ChineseToPinyin;
 import com.danny.media.library.utils.Util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,23 +18,45 @@ import java.util.Map;
  * Created by dannywang on 2017/12/29.
  */
 
-public abstract class MusicProvider implements MediaProvider {
+public abstract class MusicProvider{
     protected Context context;
     protected List<Song> songList = new ArrayList<>();
     protected Map<String,List<Song>> singerList = new HashMap<>();
     protected Map<String,List<Song>> albumList = new HashMap<>();
     protected Map<String,List<Song>> folderList = new HashMap<>();
-    protected MusicSourceChangeListener musicSourceChangeListener;
+    protected IMusicScanListener IMusicScanListener;
 
     public MusicProvider(Context context){
         this.context = context;
     }
 
-    @Override
-    public abstract void scanMediaResources();
+    protected abstract void scanMediaResources();
 
-    public void setMusicSourceChangeListener(MusicSourceChangeListener musicSourceChangeListener){
-        this.musicSourceChangeListener = musicSourceChangeListener;
+    private void clear(){
+        songList.clear();
+        singerList.clear();
+        albumList.clear();
+        folderList.clear();
+    }
+
+    /**
+     * 对外接口，启动加载本地音乐
+     */
+    public void loadMusic(){
+        if (IMusicScanListener != null){
+            IMusicScanListener.onStartScan();
+        }
+        clear();
+        scanMediaResources();
+        sortList();
+        categoryMusicList();
+        if (IMusicScanListener != null){
+            IMusicScanListener.onScanFinish();
+        }
+    }
+
+    public void setIMusicScanListener(IMusicScanListener IMusicScanListener){
+        this.IMusicScanListener = IMusicScanListener;
     }
 
     /**
@@ -68,22 +91,14 @@ public abstract class MusicProvider implements MediaProvider {
         return folderList;
     }
 
-    public List<Song> getMusicList(int startPosition,int endPosition){
-        return songList.subList(startPosition,endPosition);
-    }
-
-    public Song getMusic(int position){
-        if (songList != null && position >= 0 && position < songList.size()){
-            return songList.get(position);
-        }
-
-        return null;
-    }
+//    public List<Song> getMusicList(int startPosition,int endPosition){
+//        return songList.subList(startPosition,endPosition);
+//    }
 
     /**
      * 将歌曲进行排序
      */
-    protected void sortMusicList(){
+    protected void sortList(){
         Collections.sort(songList, new Comparator<Song>() {
             @Override
             public int compare(Song lhs, Song rhs) {
@@ -106,8 +121,6 @@ public abstract class MusicProvider implements MediaProvider {
                 return 0;
             }
         });
-
-        categoryMusicList();
     }
 
     /**
@@ -115,13 +128,46 @@ public abstract class MusicProvider implements MediaProvider {
      */
     private void categoryMusicList(){
         for (Song song: songList) {
+            //按歌手分类
+            String singer = song.getArtist();
+            if (singerList.containsKey(singer)){
+                List<Song> temp = singerList.get(singer);
+                temp.add(song);
+            }else{
+                List<Song> temp = new ArrayList<>();
+                temp.add(song);
+                singerList.put(singer,temp);
+            }
 
+            //按专辑分类
+            String albumId = String.valueOf(song.getAlbumId());
+            if (albumList.containsKey(albumId)){
+                List<Song> temp = albumList.get(albumId);
+                temp.add(song);
+            }else{
+                List<Song> temp = new ArrayList<>();
+                temp.add(song);
+                albumList.put(albumId,temp);
+            }
+
+            //按文件夹分类
+            String filePath = song.getPath();
+            File tempFile = new File(filePath);
+            String folder = tempFile.getParent();
+            if (folderList.containsKey(folder)){
+                List<Song> temp = folderList.get(folder);
+                temp.add(song);
+            }else{
+                List<Song> temp = new ArrayList<>();
+                temp.add(song);
+                folderList.put(folder,temp);
+            }
         }
     }
 
-    public interface MusicSourceChangeListener{
+    public interface IMusicScanListener {
         void onStartScan();
-        void onMusicSourceChange(int startPosition,int endPosition);
+//        void onMusicSourceChange(int startPosition,int endPosition);
         void onScanFinish();
     }
 }

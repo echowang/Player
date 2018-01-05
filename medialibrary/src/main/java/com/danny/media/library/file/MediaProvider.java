@@ -7,5 +7,6 @@ import java.util.List;
  */
 
 public interface MediaProvider {
-    void scanMediaResources();
+   void scanMediaResources();
+   void sortList();
 }

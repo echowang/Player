@@ -22,7 +22,7 @@ public class MediaMusicProvider extends MusicProvider {
     }
 
     @Override
-    public void scanMediaResources() {
+    protected void scanMediaResources() {
         //查询媒体库数据
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -72,8 +72,5 @@ public class MediaMusicProvider extends MusicProvider {
                 cursor.close();
             }
         }
-
-
-        sortMusicList();
     }
 }
