@@ -2,7 +2,6 @@ package com.danny.media.library.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -60,6 +59,9 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
         if (musicProvider != null){
             musicProvider.loadMusic();
         }
+
+        AudioFocusManager.getInstance().requestAudioFocus(this);
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -83,6 +85,8 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
     @Override
     public void onDestroy() {
         Log.i(TAG,"onDestroy");
+
+        AudioFocusManager.getInstance().abanodAudioFocus(this);
         super.onDestroy();
     }
 

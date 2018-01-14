@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,7 @@ public class MainActivity extends BaseAcivity implements MusicPlayerService.IMus
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG,"initView");
         mRecyclerView = findViewById(R.id.main_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -45,6 +47,11 @@ public class MainActivity extends BaseAcivity implements MusicPlayerService.IMus
         mRecyclerView.setAdapter(musicListAdpter);
 
         bindService();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -69,8 +76,11 @@ public class MainActivity extends BaseAcivity implements MusicPlayerService.IMus
 
         musicListAdpter.setSongList(songList);
 
-        Song song = songList.get(0);
-        playerBinder.play(song);
+        if (!songList.isEmpty()){
+            Song song = songList.get(0);
+            playerBinder.play(song);
+        }
+
     }
 
     @Override
