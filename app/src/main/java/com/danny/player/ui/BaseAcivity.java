@@ -19,4 +19,5 @@ public abstract class BaseAcivity extends FragmentActivity {
         setContentView(getLayoutId());
         initView(savedInstanceState);
     }
+
 }

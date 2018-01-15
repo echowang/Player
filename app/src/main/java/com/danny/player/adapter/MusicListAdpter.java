@@ -2,6 +2,7 @@ package com.danny.player.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,11 @@ import java.util.List;
  */
 
 public class MusicListAdpter extends RecyclerView.Adapter {
+    private final static String TAG = MusicListAdpter.class.getSimpleName();
     private LayoutInflater layoutInflater;
     private List<Song> songList;
+
+    private OnMusicItemClick onMusicItemClick;
 
     public MusicListAdpter(Context context){
         this.layoutInflater = LayoutInflater.from(context);
@@ -36,8 +40,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
         RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
 
         Song song = getItem(position);
-        recyclerViewHolder.itemBindSong(song);
-
+        recyclerViewHolder.itemBindSong(position,song);
     }
 
     @Override
@@ -60,6 +63,14 @@ public class MusicListAdpter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
+    public OnMusicItemClick getOnMusicItemClick() {
+        return onMusicItemClick;
+    }
+
+    public void setOnMusicItemClick(OnMusicItemClick onMusicItemClick) {
+        this.onMusicItemClick = onMusicItemClick;
+    }
+
     public class RecyclerViewHolder extends RecyclerView.ViewHolder{
         private TextView itemNameText;
 
@@ -69,11 +80,24 @@ public class MusicListAdpter extends RecyclerView.Adapter {
             itemNameText = (TextView) itemView.findViewById(R.id.recycler_item_name);
         }
 
-        public void itemBindSong(Song song){
+        public void itemBindSong(final int position,final Song song){
             if (song == null){
                 return;
             }
             itemNameText.setText(song.getTitle());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG,"onClick");
+                    if (onMusicItemClick != null){
+                        onMusicItemClick.onClick(position,song);
+                    }
+                }
+            });
         }
+    }
+
+    public interface OnMusicItemClick{
+        void onClick(int position,Song song);
     }
 }
