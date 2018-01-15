@@ -65,7 +65,10 @@ public class MediaMusicProvider extends MusicProvider {
                         song.setAlbum(DEFAULT_ALBUM);
                     }
                 }
-                songList.add(song);
+
+                if (song.getDuration() > 0){
+                    songList.add(song);
+                }
             }while (cursor.moveToNext());
 
             if (!cursor.isClosed()){

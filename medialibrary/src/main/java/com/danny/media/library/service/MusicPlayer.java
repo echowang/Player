@@ -19,12 +19,15 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     private PlayerScheduleListener scheduleListener;
 
     private Handler mHandler;
-    private static final long TIME_UPDATE = 300L;
+    private static final long TIME_UPDATE = 800L;
     private Runnable mPublishRunnable = new Runnable(){
         @Override
         public void run() {
             if (isPlaying() && scheduleListener != null){
-                scheduleListener.onPublish(mPlayer.getCurrentPosition());
+                long total = mPlayer.getDuration();
+                long position = mPlayer.getCurrentPosition();
+                int progress = (int) (1.0 * position / total * 100);
+                scheduleListener.onPublish(progress);
             }
 
             mHandler.postDelayed(this, TIME_UPDATE);
@@ -65,6 +68,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
         pause();
         mPlayer.reset();
         playerStaue = PlayerStaue.STATE_IDLE;
+        mHandler.removeCallbacks(mPublishRunnable);
     }
 
     @Override
@@ -116,7 +120,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     private void startPlaying(){
         playerStaue = PlayerStaue.STATE_PLAYING;
         mPlayer.start();
-        mHandler.post(mPublishRunnable);
+        mHandler.postDelayed(mPublishRunnable,TIME_UPDATE);
     }
 
     public Song getPlaySong(){

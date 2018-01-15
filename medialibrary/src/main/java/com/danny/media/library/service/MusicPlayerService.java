@@ -13,6 +13,9 @@ import com.danny.media.library.model.Song;
 
 import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by dannywang on 2017/12/29.
  */
@@ -49,6 +52,36 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
             }
         });
 
+        AudioFocusManager.getInstance().requestAudioFocus(this);
+        AudioFocusManager.getInstance().getObservable().subscribe(new Observer<Boolean>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Boolean focus) {
+                if (focus){
+                    if (musicPlayer != null){
+                        Song playSong = musicPlayer.getPlaySong();
+                        playMusic(playSong);
+                    }
+                }else{
+                    pauseMusic();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
         musicPlayer = new MusicPlayer(this);
     }
 
@@ -60,8 +93,6 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
             musicProvider.loadMusic();
         }
 
-        AudioFocusManager.getInstance().requestAudioFocus(this);
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -72,12 +103,14 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
         if (playerBinder == null){
             playerBinder = new MusicPlayerBinder();
         }
+
         return playerBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i(TAG,"onUnbind");
+
         playerBinder = null;
         return super.onUnbind(intent);
     }
@@ -96,12 +129,18 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
 
     @Override
     public void onPublish(int progress) {
-
+        if (refreshListener != null){
+            Song song = musicPlayer.getPlaySong();
+            refreshListener.onPublish(song,progress);
+        }
     }
 
     @Override
     public void onBufferingUpdate(int percent) {
-
+        if (refreshListener != null){
+            Song song = musicPlayer.getPlaySong();
+            refreshListener.onBufferingUpdate(song,percent);
+        }
     }
 
     @Override
@@ -110,8 +149,18 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
     }
 
     private void playMusic(Song song){
+        if (song == null){
+            return;
+        }
+        if (musicPlayer.isPlaying()){
+            musicPlayer.stop();
+        }
         playSongPosition = songList.indexOf(song);
         musicPlayer.play(song);
+
+        if (refreshListener != null){
+            refreshListener.onMusicChange(song);
+        }
     }
 
     private void pauseMusic(){
@@ -170,6 +219,10 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
 
         public void next(){
             nextMusic();
+        }
+
+        public boolean isPlaying(){
+            return musicPlayer.isPlaying();
         }
     }
 
