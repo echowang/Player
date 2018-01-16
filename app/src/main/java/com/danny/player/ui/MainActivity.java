@@ -28,10 +28,10 @@ public class MainActivity extends BaseAcivity{
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
-        topBarLayout = (QMUITopBarLayout) findViewById(R.id.topbar);
+        topBarLayout = findViewById(R.id.topbar);
         topBarLayout.setTitle(R.string.app_name);
         topBarLayout.setTitleGravity(Gravity.CENTER);
-        topBarLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        topBarLayout.setBackgroundColor(getResources().getColor(R.color.player_topbar_background));
 
         Fragment musicMainFragment = new MusicMainFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();

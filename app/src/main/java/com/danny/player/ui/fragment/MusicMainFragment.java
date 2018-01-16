@@ -14,6 +14,7 @@ import com.danny.media.library.model.Song;
 import com.danny.media.library.service.MusicPlayerService;
 import com.danny.player.R;
 import com.danny.player.adapter.MusicListAdpter;
+import com.danny.player.ui.widget.MusicControllerBar;
 import com.danny.player.ui.widget.RecycleViewDivider;
 
 import java.util.List;
@@ -22,10 +23,12 @@ import java.util.List;
  * Created by tingw on 2018/1/15.
  */
 
-public class MusicMainFragment extends BaseFragment implements MusicPlayerService.IMusicUIRefreshListener,MusicListAdpter.OnMusicItemClick {
+public class MusicMainFragment extends BaseFragment implements MusicPlayerService.IMusicUIRefreshListener,MusicListAdpter.OnMusicItemClick,MusicControllerBar.MusicControllerBarListener {
     private final static String TAG = MusicMainFragment.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private MusicListAdpter musicListAdpter;
+
+    private MusicControllerBar musicControllerBar;
 
     private PlayerServiceConnection playerServiceConnection;
     private MusicPlayerService.MusicPlayerBinder playerBinder;
@@ -47,6 +50,9 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
         musicListAdpter.setOnMusicItemClick(this);
         mRecyclerView.setAdapter(musicListAdpter);
 
+        musicControllerBar = view.findViewById(R.id.music_controller_bar);
+        musicControllerBar.setControllerBarListener(this);
+
         bindService();
     }
 
@@ -66,7 +72,7 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
 
         musicListAdpter.setSongList(songList);
 
-        if (!songList.isEmpty() && !playerBinder.isPlaying()){
+        if (!songList.isEmpty() && playerBinder != null && !playerBinder.isPlaying()){
             Song song = songList.get(0);
             playerBinder.play(song);
         }
@@ -87,6 +93,7 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
     @Override
     public void onPublish(Song song, int progress) {
         Log.d(TAG,"song " + song.getTitle() + " , progress : " + progress);
+        musicControllerBar.updateMusicProgress(progress);
     }
 
     @Override
@@ -96,14 +103,46 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
 
     @Override
     public void onMusicChange(Song song) {
-
+        Log.d(TAG,"song " + song);
+        musicControllerBar.setMusicInfo(song);
+        musicControllerBar.setPlayStatue(true);
+        musicControllerBar.updateMusicProgress(0);
+        musicListAdpter.updateSelectedItem(song);
     }
 
     @Override
-    public void onClick(int position, Song song) {
+    public void onMusicItenClick(int position, Song song) {
         Log.d(TAG,"onClick : " + position);
+        if (playerBinder == null){
+            return;
+        }
         if (song != null){
-            playerBinder.play(song);
+            Song playSong = playerBinder.getPlayingMusic();
+            if (!song.equals(playSong)){
+                playerBinder.play(song);
+            }
+        }
+    }
+
+    @Override
+    public void onNextClick() {
+        if (playerBinder == null){
+            return;
+        }
+        playerBinder.next();
+    }
+
+    @Override
+    public void onPlayOrPauseClick() {
+        if (playerBinder == null){
+            return;
+        }
+        if (playerBinder.isPlaying()){
+            playerBinder.pause();
+            musicControllerBar.setPlayStatue(false);
+        }else{
+            playerBinder.resume();
+            musicControllerBar.setPlayStatue(true);
         }
     }
 

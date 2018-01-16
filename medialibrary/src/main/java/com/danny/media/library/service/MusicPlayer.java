@@ -24,10 +24,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
         @Override
         public void run() {
             if (isPlaying() && scheduleListener != null){
-                long total = mPlayer.getDuration();
-                long position = mPlayer.getCurrentPosition();
-                int progress = (int) (1.0 * position / total * 100);
-                scheduleListener.onPublish(progress);
+                scheduleListener.onPublish(mPlayer.getCurrentPosition());
             }
 
             mHandler.postDelayed(this, TIME_UPDATE);
@@ -61,6 +58,13 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
         mPlayer.pause();
         playerStaue = PlayerStaue.STATE_PAUSE;
         mHandler.removeCallbacks(mPublishRunnable);
+    }
+
+    @Override
+    public void resume() {
+        if (playerStaue == PlayerStaue.STATE_PAUSE){
+            startPlaying();
+        }
     }
 
     @Override

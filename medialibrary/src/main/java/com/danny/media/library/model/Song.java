@@ -22,7 +22,7 @@ public class Song implements Serializable {
     // [在线歌曲]专辑封面路径
     private String coverPath;
     // 持续时间
-    private long duration;
+    private int duration;
     // 音乐路径
     private String path;
     // 文件名
@@ -101,11 +101,11 @@ public class Song implements Serializable {
         this.coverPath = coverPath;
     }
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 

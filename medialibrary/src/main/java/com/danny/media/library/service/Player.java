@@ -9,6 +9,7 @@ import com.danny.media.library.model.Song;
 public interface Player {
     void play(Song song);
     void pause();
+    void resume();
     void stop();
     void seekTo(int msec);
     boolean isPlaying();

@@ -22,6 +22,8 @@ public class MusicListAdpter extends RecyclerView.Adapter {
     private LayoutInflater layoutInflater;
     private List<Song> songList;
 
+    private int selectedPosition = 0;
+
     private OnMusicItemClick onMusicItemClick;
 
     public MusicListAdpter(Context context){
@@ -63,8 +65,20 @@ public class MusicListAdpter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    public OnMusicItemClick getOnMusicItemClick() {
-        return onMusicItemClick;
+    public void updateSelectedItem(int position){
+        if (songList == null || position < 0 || position >= songList.size() || position == selectedPosition){
+            return;
+        }
+
+        selectedPosition = position;
+        notifyDataSetChanged();
+    }
+
+    public void updateSelectedItem(Song song){
+        if (song != null && songList != null){
+            int position = songList.indexOf(song);
+            updateSelectedItem(position);
+        }
     }
 
     public void setOnMusicItemClick(OnMusicItemClick onMusicItemClick) {
@@ -72,17 +86,25 @@ public class MusicListAdpter extends RecyclerView.Adapter {
     }
 
     public class RecyclerViewHolder extends RecyclerView.ViewHolder{
+        private View container;
         private TextView itemNameText;
 
         public RecyclerViewHolder(View itemView) {
             super(itemView);
 
-            itemNameText = (TextView) itemView.findViewById(R.id.recycler_item_name);
+            container = itemView.findViewById(R.id.recycler_item_container);
+            itemNameText = itemView.findViewById(R.id.recycler_item_name);
         }
 
         public void itemBindSong(final int position,final Song song){
             if (song == null){
                 return;
+            }
+
+            if (position == selectedPosition){
+                container.setBackgroundResource(R.drawable.recyclerview_item_selected_selector);
+            }else{
+                container.setBackgroundResource(R.drawable.recyclerview_item_selector);
             }
             itemNameText.setText(song.getTitle());
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +112,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
                 public void onClick(View view) {
                     Log.d(TAG,"onClick");
                     if (onMusicItemClick != null){
-                        onMusicItemClick.onClick(position,song);
+                        onMusicItemClick.onMusicItenClick(position,song);
                     }
                 }
             });
@@ -98,6 +120,6 @@ public class MusicListAdpter extends RecyclerView.Adapter {
     }
 
     public interface OnMusicItemClick{
-        void onClick(int position,Song song);
+        void onMusicItenClick(int position,Song song);
     }
 }

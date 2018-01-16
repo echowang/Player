@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/controller_bar_background"
+    android:padding="0dp">
+
+    <SeekBar
+        android:id="@+id/music_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/music_seekbar"
+        android:padding="0dp">
+        <ImageView
+            android:id="@+id/music_icon"
+            android:layout_width="@dimen/controller_bar_icon_width"
+            android:layout_height="@dimen/controller_bar_icon_hight"
+            android:layout_marginLeft="@dimen/controller_bar_item_margin_left"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/default_artist"
+            android:scaleType="centerInside"/>
+
+        <LinearLayout android:id="@+id/music_operation_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/controller_bar_margin_right"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/music_bar_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@mipmap/ic_play_bar_btn_play"/>
+
+            <ImageButton
+                android:id="@+id/music_bar_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@mipmap/ic_play_bar_btn_next"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/music_icon"
+            android:layout_toLeftOf="@id/music_operation_btn"
+            android:layout_marginLeft="@dimen/controller_bar_item_margin_left"
+            android:layout_marginRight="@dimen/controller_bar_item_margin_right"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/music_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:textSize="16sp"
+                android:text="@string/music_name_default"/>
+
+            <TextView
+                android:id="@+id/music_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/controller_bar_item_margin_top"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:textSize="14sp"
+                android:text="@string/music_artist_default"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

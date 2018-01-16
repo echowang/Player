@@ -167,6 +167,10 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
         musicPlayer.pause();
     }
 
+    private void resumeMusic(){
+        musicPlayer.resume();
+    }
+
     private void stopMusic(){
         musicPlayer.stop();
     }
@@ -186,6 +190,9 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
         }
         Song song = songList.get(playSongPosition);
         musicPlayer.play(song);
+        if (refreshListener != null){
+            refreshListener.onMusicChange(song);
+        }
     }
 
     public class MusicPlayerBinder extends Binder{
@@ -207,6 +214,10 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
 
         public void pause(){
             pauseMusic();
+        }
+
+        public void resume(){
+            resumeMusic();
         }
 
         public void stop(){
