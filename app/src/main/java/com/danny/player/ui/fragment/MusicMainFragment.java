@@ -33,6 +33,8 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
     private PlayerServiceConnection playerServiceConnection;
     private MusicPlayerService.MusicPlayerBinder playerBinder;
 
+    private int playProgress = 0;
+
     @Override
     protected int getLayout() {
         return R.layout.fragment_music_main;
@@ -42,6 +44,9 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
     protected void initView(View view) {
         super.initView(view);
         Log.d(TAG,"initView");
+        setToolBarTitle(getString(R.string.player_music));
+        setToolBarBackStatue(false);
+
         mRecyclerView = view.findViewById(R.id.main_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL));
@@ -70,11 +75,25 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
             return;
         }
 
-        musicListAdpter.setSongList(songList);
+        if (!songList.isEmpty() && playerBinder != null){
+            Song song = playerBinder.getPlayingMusic();
+            if (song == null){
+                song = songList.get(0);
+            }
 
-        if (!songList.isEmpty() && playerBinder != null && !playerBinder.isPlaying()){
-            Song song = songList.get(0);
-            playerBinder.play(song);
+            boolean isPlaying = playerBinder.isPlaying();
+            if (!isPlaying){
+                if (playerBinder.isAutoPlay()){
+                    playerBinder.play(song);
+                    isPlaying = true;
+                }
+            }
+
+            musicControllerBar.setMusicInfo(song);
+            musicControllerBar.setPlayStatue(isPlaying);
+            musicControllerBar.updateMusicProgress(playProgress);
+            int position = songList.indexOf(song);
+            musicListAdpter.setSongList(songList,position,isPlaying);
         }
 
     }
@@ -93,7 +112,10 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
     @Override
     public void onPublish(Song song, int progress) {
         Log.d(TAG,"song " + song.getTitle() + " , progress : " + progress);
-        musicControllerBar.updateMusicProgress(progress);
+        playProgress = progress;
+        if (isVisible()){
+            musicControllerBar.updateMusicProgress(progress);
+        }
     }
 
     @Override
@@ -103,10 +125,14 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
 
     @Override
     public void onMusicChange(Song song) {
+        if (song == null || playerBinder == null){
+            return;
+        }
         Log.d(TAG,"song " + song);
+        playProgress = 0;
         musicControllerBar.setMusicInfo(song);
         musicControllerBar.setPlayStatue(true);
-        musicControllerBar.updateMusicProgress(0);
+        musicControllerBar.updateMusicProgress(playProgress);
         musicListAdpter.updateSelectedItem(song);
     }
 
@@ -138,12 +164,20 @@ public class MusicMainFragment extends BaseFragment implements MusicPlayerServic
             return;
         }
         if (playerBinder.isPlaying()){
+            musicListAdpter.updatePlayAnimationStatue(false);
             playerBinder.pause();
             musicControllerBar.setPlayStatue(false);
         }else{
+            musicListAdpter.updatePlayAnimationStatue(true);
             playerBinder.resume();
             musicControllerBar.setPlayStatue(true);
         }
+    }
+
+    @Override
+    public void OnControllerBarClick() {
+        BaseFragment fragment = new MusicInfoFragment();
+        startFragment(fragment);
     }
 
     private class PlayerServiceConnection implements ServiceConnection {

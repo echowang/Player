@@ -1,6 +1,7 @@
 package com.danny.player.ui.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -13,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.danny.media.library.file.MediaProviderFactory;
+import com.danny.media.library.file.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.player.R;
 
@@ -21,6 +24,7 @@ import com.danny.player.R;
  */
 
 public class MusicControllerBar extends LinearLayout implements View.OnClickListener {
+    private View container;
     private ImageView musicIcon;
     private TextView musicName;
     private TextView musicArtist;
@@ -53,13 +57,15 @@ public class MusicControllerBar extends LinearLayout implements View.OnClickList
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         layoutInflater.inflate(R.layout.music_controller_bar,this,true);
 
-        musicIcon = findViewById(R.id.music_icon);
+        container = findViewById(R.id.music_controller_bar);
+        musicIcon = findViewById(R.id.music_album_icon);
         musicName = findViewById(R.id.music_name);
         musicArtist = findViewById(R.id.music_artist);
         playBtn = findViewById(R.id.music_bar_play);
         netxtBtn = findViewById(R.id.music_bar_next);
         musicSeekBar = findViewById(R.id.music_seekbar);
 
+        container.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         netxtBtn.setOnClickListener(this);
     }
@@ -76,6 +82,12 @@ public class MusicControllerBar extends LinearLayout implements View.OnClickList
             case R.id.music_bar_next:{
                 if (controllerBarListener != null){
                     controllerBarListener.onNextClick();
+                }
+                break;
+            }
+            case R.id.music_controller_bar:{
+                if (controllerBarListener != null){
+                    controllerBarListener.OnControllerBarClick();
                 }
                 break;
             }
@@ -98,6 +110,14 @@ public class MusicControllerBar extends LinearLayout implements View.OnClickList
             musicName.setText(song.getTitle());
             musicArtist.setText(song.getArtist());
             musicSeekBar.setMax(song.getDuration());
+
+            MusicProvider musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(getContext());
+            Bitmap albumBitmap = musicProvider.getAlbumImage(getContext(),song.getAlbumId());
+            if (albumBitmap == null){
+                musicIcon.setImageResource(R.mipmap.default_artist);
+            }else{
+                musicIcon.setImageBitmap(albumBitmap);
+            }
         }
     }
 
@@ -108,5 +128,6 @@ public class MusicControllerBar extends LinearLayout implements View.OnClickList
     public interface MusicControllerBarListener{
         void onNextClick();
         void onPlayOrPauseClick();
+        void OnControllerBarClick();
     }
 }

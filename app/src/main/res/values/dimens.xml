@@ -11,4 +11,7 @@
     <dimen name="controller_bar_icon_hight">44dp</dimen>
 
     <dimen name="music_list_item_height">60dp</dimen>
+
+    <dimen name="recyclerview_item_icon_width">44dp</dimen>
+    <dimen name="recyclerview_item_icon_hight">44dp</dimen>
 </resources>

@@ -1,13 +1,18 @@
 package com.danny.player.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.danny.media.library.file.MediaProviderFactory;
+import com.danny.media.library.file.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.player.R;
 
@@ -19,14 +24,17 @@ import java.util.List;
 
 public class MusicListAdpter extends RecyclerView.Adapter {
     private final static String TAG = MusicListAdpter.class.getSimpleName();
+    private Context mContext;
     private LayoutInflater layoutInflater;
     private List<Song> songList;
 
     private int selectedPosition = 0;
+    private boolean isPlaying = true;
 
     private OnMusicItemClick onMusicItemClick;
 
     public MusicListAdpter(Context context){
+        this.mContext = context;
         this.layoutInflater = LayoutInflater.from(context);
     }
 
@@ -65,12 +73,28 @@ public class MusicListAdpter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
+    public void setSongList(List<Song> songList,int selectedPosition,boolean isPlaying){
+        if (songList == null){
+            return;
+        }
+        this.songList = songList;
+        this.selectedPosition = selectedPosition;
+        this.isPlaying = isPlaying;
+        notifyDataSetChanged();
+    }
+
     public void updateSelectedItem(int position){
         if (songList == null || position < 0 || position >= songList.size() || position == selectedPosition){
             return;
         }
 
+        isPlaying = true;
         selectedPosition = position;
+        notifyDataSetChanged();
+    }
+
+    public void updatePlayAnimationStatue(boolean playing){
+        isPlaying = playing;
         notifyDataSetChanged();
     }
 
@@ -87,13 +111,24 @@ public class MusicListAdpter extends RecyclerView.Adapter {
 
     public class RecyclerViewHolder extends RecyclerView.ViewHolder{
         private View container;
+        private ImageView itemAlbumIcon;
         private TextView itemNameText;
+        private TextView itemDescText;
+        private ImageView itemAnimation;
+
+        private MusicProvider musicProvider;
+
 
         public RecyclerViewHolder(View itemView) {
             super(itemView);
 
             container = itemView.findViewById(R.id.recycler_item_container);
-            itemNameText = itemView.findViewById(R.id.recycler_item_name);
+            itemAlbumIcon = itemView.findViewById(R.id.item_music_album_icon);
+            itemNameText = itemView.findViewById(R.id.item_music_name);
+            itemDescText = itemView.findViewById(R.id.item_music_describe);
+            itemAnimation = itemView.findViewById(R.id.item_music_play_animation);
+
+            musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(mContext);
         }
 
         public void itemBindSong(final int position,final Song song){
@@ -103,10 +138,42 @@ public class MusicListAdpter extends RecyclerView.Adapter {
 
             if (position == selectedPosition){
                 container.setBackgroundResource(R.drawable.recyclerview_item_selected_selector);
+
+                itemAnimation.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        AnimationDrawable animator = (AnimationDrawable) itemAnimation.getDrawable();
+                        if (isPlaying){
+                            animator.start();
+                        }else{
+                            animator.stop();
+                        }
+                    }
+                },300);
+
+                itemAnimation.setVisibility(View.VISIBLE);
             }else{
                 container.setBackgroundResource(R.drawable.recyclerview_item_selector);
+                itemAnimation.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        AnimationDrawable animator = (AnimationDrawable) itemAnimation.getDrawable();
+                        animator.stop();
+                    }
+                },300);
+
+                itemAnimation.setVisibility(View.GONE);
+            }
+
+            Bitmap albumBitmap = musicProvider.getAlbumImage(mContext,song.getAlbumId());
+            if (albumBitmap == null){
+                itemAlbumIcon.setImageResource(R.mipmap.default_artist);
+            }else{
+                itemAlbumIcon.setImageBitmap(albumBitmap);
             }
             itemNameText.setText(song.getTitle());
+            itemDescText.setText(song.getArtist() + "-" + song.getAlbum());
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

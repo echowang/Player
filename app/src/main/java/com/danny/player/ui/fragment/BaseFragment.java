@@ -12,6 +12,8 @@ import android.view.ViewGroup;
  */
 
 public abstract class BaseFragment extends Fragment {
+    private FragmentEventListener fragmentEventListener;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -30,5 +32,33 @@ public abstract class BaseFragment extends Fragment {
 
     protected void initView(View view){
 
+    }
+
+    public void setFragmentEventListener(FragmentEventListener fragmentEventListener){
+        this.fragmentEventListener = fragmentEventListener;
+    }
+
+    protected void startFragment(BaseFragment fragment){
+        if (fragmentEventListener != null){
+            fragmentEventListener.startFragment(fragment);
+        }
+    }
+
+    protected void setToolBarTitle(String title){
+        if (fragmentEventListener != null){
+            fragmentEventListener.setToolBarTitle(title);
+        }
+    }
+
+    protected void setToolBarBackStatue(boolean show){
+        if (fragmentEventListener != null){
+            fragmentEventListener.setToolBarBackStatue(show);
+        }
+    }
+
+    public interface FragmentEventListener{
+        void setToolBarTitle(String title);
+        void setToolBarBackStatue(boolean show);
+        void startFragment(BaseFragment fragment);
     }
 }

@@ -29,6 +29,7 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
     private MusicPlayer musicPlayer;
     private List<Song> songList;
     private int playSongPosition;
+    private boolean autoPlay = true;
 
     @Override
     public void onCreate() {
@@ -63,11 +64,17 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
             public void onNext(Boolean focus) {
                 if (focus){
                     if (musicPlayer != null){
-                        Song playSong = musicPlayer.getPlaySong();
-                        playMusic(playSong);
+                        if (musicPlayer.isPausing()){
+                            resumeMusic();
+                        }else if (autoPlay){
+                            Song playSong = musicPlayer.getPlaySong();
+                            playMusic(playSong);
+                        }
                     }
                 }else{
-                    pauseMusic();
+                    if (musicPlayer != null && musicPlayer.isPlaying()){
+                        stopMusic();
+                    }
                 }
             }
 
@@ -164,10 +171,12 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
     }
 
     private void pauseMusic(){
+        autoPlay = false;
         musicPlayer.pause();
     }
 
     private void resumeMusic(){
+        autoPlay = true;
         musicPlayer.resume();
     }
 
@@ -234,6 +243,10 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
 
         public boolean isPlaying(){
             return musicPlayer.isPlaying();
+        }
+
+        public boolean isAutoPlay(){
+            return autoPlay;
         }
     }
 

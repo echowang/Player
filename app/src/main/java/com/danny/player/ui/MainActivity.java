@@ -5,21 +5,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Gravity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.MenuItem;
 
 import com.danny.player.R;
+import com.danny.player.ui.fragment.BaseFragment;
 import com.danny.player.ui.fragment.MusicMainFragment;
-import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 
 
 /**
  * Created by tingw on 2018/1/3.
  */
 
-public class MainActivity extends BaseAcivity{
+public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEventListener{
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    private QMUITopBarLayout topBarLayout;
+    private Toolbar toolbar;
 
     @Override
     protected int getLayoutId() {
@@ -28,27 +30,19 @@ public class MainActivity extends BaseAcivity{
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
-        topBarLayout = findViewById(R.id.topbar);
-        topBarLayout.setTitle(R.string.app_name);
-        topBarLayout.setTitleGravity(Gravity.CENTER);
-        topBarLayout.setBackgroundColor(getResources().getColor(R.color.player_topbar_background));
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        Fragment musicMainFragment = new MusicMainFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container,musicMainFragment,MusicMainFragment.class.getSimpleName());
-        fragmentTransaction.addToBackStack("player");
-        fragmentTransaction.commitAllowingStateLoss();
+        BaseFragment musicMainFragment = new MusicMainFragment();
+        startFragment(musicMainFragment);
     }
 
     @Override
-    public void onBackPressed() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() > 1){
-            fragmentManager.popBackStack();
-        }else{
-            finish();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            onBackPressed();
         }
+        return true;
     }
 
     @Override
@@ -56,4 +50,31 @@ public class MainActivity extends BaseAcivity{
         super.onDestroy();
     }
 
+    @Override
+    public void setToolBarTitle(String title) {
+        if (TextUtils.isEmpty(title)){
+            return;
+        }
+        toolbar.setTitle(title);
+    }
+
+    @Override
+    public void setToolBarBackStatue(boolean show) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(show);
+    }
+
+    @Override
+    public void startFragment(BaseFragment fragment) {
+        if (fragment != null){
+            fragment.setFragmentEventListener(this);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.fragment_container,fragment,MusicMainFragment.class.getSimpleName());
+            fragmentTransaction.addToBackStack("player");
+            fragmentTransaction.commitAllowingStateLoss();
+        }
+    }
 }

@@ -1,6 +1,11 @@
 package com.danny.media.library.file;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.text.TextUtils;
 
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.ChineseToPinyin;
@@ -94,6 +99,34 @@ public abstract class MusicProvider{
 //    public List<Song> getMusicList(int startPosition,int endPosition){
 //        return songList.subList(startPosition,endPosition);
 //    }
+
+    /**
+     * 通过 专辑id 查询专辑图片
+     * @param albumId
+     * @return
+     */
+    public Bitmap getAlbumImage(Context context,long albumId){
+        String albumArt = getAlbumArt(context,String.valueOf(albumId));
+        if (TextUtils.isEmpty(albumArt)){
+            return null;
+        }
+        Bitmap bitmap = BitmapFactory.decodeFile(albumArt);
+        return bitmap;
+    }
+
+    private String getAlbumArt(Context context,String album_id)
+    {
+        String mUriAlbums = "content://media/external/audio/albums";
+        String[] projection = new String[] { "album_art" };
+        Cursor cur = context.getContentResolver().query(Uri.parse(mUriAlbums + "/" + album_id),  projection, null, null, null);
+        String album_art = null;
+        if (cur.getCount() > 0 && cur.getColumnCount() > 0)
+        {  cur.moveToNext();
+            album_art = cur.getString(0);
+        }
+        cur.close();
+        return album_art;
+    }
 
     /**
      * 将歌曲进行排序
