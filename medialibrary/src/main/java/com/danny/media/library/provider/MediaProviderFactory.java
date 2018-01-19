@@ -1,4 +1,4 @@
-package com.danny.media.library.file;
+package com.danny.media.library.provider;
 
 import android.content.Context;
 

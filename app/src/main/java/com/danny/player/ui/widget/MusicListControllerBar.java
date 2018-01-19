@@ -6,7 +6,6 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -15,9 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.danny.media.library.file.MediaProviderFactory;
-import com.danny.media.library.file.MusicProvider;
+import com.danny.media.library.provider.MediaProviderFactory;
+import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 
 /**
@@ -115,7 +115,7 @@ public class MusicListControllerBar extends LinearLayout implements View.OnClick
             musicSeekBar.setMax(song.getDuration());
 
             MusicProvider musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(getContext());
-            Bitmap albumBitmap = musicProvider.getAlbumImage(getContext(),song.getAlbumId());
+            Bitmap albumBitmap = musicProvider.getAlbumImage(getContext(),song);
             if (albumBitmap == null){
                 musicIcon.setImageResource(R.mipmap.default_artist);
             }else{
@@ -125,7 +125,7 @@ public class MusicListControllerBar extends LinearLayout implements View.OnClick
     }
 
     public void updateMusicProgress(int progress){
-        Log.i(TAG,"progress : " + progress);
+        LogUtil.i(TAG,"progress : " + progress);
         musicSeekBar.setProgress(progress);
     }
 

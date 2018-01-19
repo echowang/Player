@@ -1,12 +1,10 @@
-package com.danny.media.library.file;
-
-import java.util.List;
+package com.danny.media.library.provider;
 
 /**
  * Created by tingw on 2018/1/2.
  */
 
-public interface MediaProvider {
+public interface MediaProviderListener {
    void scanMediaResources();
    void sortList();
 }

@@ -7,11 +7,11 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.danny.media.library.model.Song;
 import com.danny.media.library.service.MusicPlayerService;
 import com.danny.media.library.service.PlayerService;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.adapter.MusicListAdpter;
 import com.danny.player.application.PlayerApplication;
@@ -19,12 +19,8 @@ import com.danny.player.ui.widget.MusicListControllerBar;
 import com.danny.player.ui.widget.RecycleViewDivider;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by tingw on 2018/1/15.
@@ -51,7 +47,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
     @Override
     protected void initView() {
         super.initView();
-        Log.d(TAG,"initView");
+        LogUtil.d(TAG,"initView");
         setToolBarTitle(getString(R.string.player_music));
         setToolBarBackStatue(false);
 
@@ -91,7 +87,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
     }
 
     private void setMusicListData(List<Song> songList){
-        Log.i(TAG,"setMusicListData");
+        LogUtil.i(TAG,"setMusicListData");
         if (songList == null && !songList.isEmpty()){
             return;
         }
@@ -115,6 +111,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
             musicListControllerBar.updateMusicProgress(playerService.getPlayProgress());
             int position = songList.indexOf(song);
             musicListAdpter.setSongList(songList,position,isPlaying);
+            mRecyclerView.scrollToPosition(position);
         }
 
     }
@@ -139,7 +136,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
 
     @Override
     public void onPublish(Song song, int progress) {
-        Log.d(TAG,"song " + song.getTitle() + " , progress : " + progress);
+        LogUtil.d(TAG,"song " + song.getTitle() + " , progress : " + progress);
         if (isVisible()){
             musicListControllerBar.updateMusicProgress(progress);
         }
@@ -147,7 +144,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
 
     @Override
     public void onBufferingUpdate(Song song, int percent) {
-        Log.d(TAG,"song " + song.getTitle() + " , percent : " + percent);
+        LogUtil.d(TAG,"song " + song.getTitle() + " , percent : " + percent);
     }
 
     @Override
@@ -155,18 +152,18 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
         if (song == null || playerService == null){
             return;
         }
-        Log.d(TAG,"song " + song);
+        LogUtil.d(TAG,"song " + song);
         updateMusicInfo(song);
     }
 
     @Override
     public void onMusicItenClick(int position, Song song) {
-        Log.d(TAG,"onClick : " + position);
+        LogUtil.d(TAG,"onClick : " + position);
         if (playerService == null){
             return;
         }
         if (song != null){
-            Song playSong = (Song) playerService.getPlaySource();
+            Song playSong = playerService.getPlaySource();
             if (!song.equals(playSong)){
                 playerService.play(song);
             }
@@ -211,14 +208,17 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
         musicListControllerBar.setMusicInfo(song);
         musicListControllerBar.setPlayStatue(playerService.isPlaying());
         musicListControllerBar.updateMusicProgress(playerService.getPlayProgress());
-        musicListAdpter.updateSelectedItem(song);
+        int position = musicListAdpter.updateSelectedItem(song);
+        if (position >= 0){
+            mRecyclerView.scrollToPosition(position);
+        }
     }
 
     private class PlayerServiceConnection implements ServiceConnection {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Log.i(TAG,"onServiceConnected");
+            LogUtil.i(TAG,"onServiceConnected");
             if (iBinder != null && iBinder instanceof PlayerService.PlayerBinder){
                 PlayerService.PlayerBinder playerBinder = (PlayerService.PlayerBinder) iBinder;
                 playerService = playerBinder.getPlayerService();

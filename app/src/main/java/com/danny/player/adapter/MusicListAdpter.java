@@ -4,16 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.danny.media.library.file.MediaProviderFactory;
-import com.danny.media.library.file.MusicProvider;
+import com.danny.media.library.provider.MediaProviderFactory;
+import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 
 import java.util.List;
@@ -98,11 +98,15 @@ public class MusicListAdpter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    public void updateSelectedItem(Song song){
+    public int updateSelectedItem(Song song){
         if (song != null && songList != null){
             int position = songList.indexOf(song);
             updateSelectedItem(position);
+
+            return position;
         }
+
+        return -1;
     }
 
     public void setOnMusicItemClick(OnMusicItemClick onMusicItemClick) {
@@ -165,7 +169,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
                 itemAnimation.setVisibility(View.GONE);
             }
 
-            Bitmap albumBitmap = musicProvider.getAlbumImage(mContext,song.getAlbumId());
+            Bitmap albumBitmap = musicProvider.getAlbumImage(mContext,song);
             if (albumBitmap == null){
                 itemAlbumIcon.setImageResource(R.mipmap.default_artist);
             }else{
@@ -177,7 +181,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG,"onClick");
+                    LogUtil.d(TAG,"onClick");
                     if (onMusicItemClick != null){
                         onMusicItemClick.onMusicItenClick(position,song);
                     }

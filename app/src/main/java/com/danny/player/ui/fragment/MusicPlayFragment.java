@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.danny.media.library.file.MediaProviderFactory;
-import com.danny.media.library.file.MusicProvider;
+import com.danny.media.library.provider.MediaProviderFactory;
+import com.danny.media.library.provider.MusicProvider;
+import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.service.PlayerService;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.adapter.PlayPagerAdapter;
 import com.danny.player.application.PlayerApplication;
@@ -19,20 +21,19 @@ import com.danny.player.ui.widget.MusicAlbumCoverView;
 import com.danny.player.ui.widget.MusicPlayControllerBar;
 import com.tmall.ultraviewpager.UltraViewPager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
+import me.wcy.lrcview.LrcView;
 
 /**
  * Created by tingw on 2018/1/17.
  */
-
 public class MusicPlayFragment extends BaseFragment implements PlayerService.IServiceUIRefreshListener<Song>, MusicPlayControllerBar.MusicPlayControllerBarListener {
+    private final static String TAG = MusicPlayFragment.class.getSimpleName();
+
     @BindView(R.id.music_play_container_bg)
     ImageView containerBgView;
     @BindView(R.id.music_play_controller_bar)
@@ -40,9 +41,9 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
     @BindView(R.id.music_play_viewpager)
     UltraViewPager musicPlayViewPager;
 
-    MusicAlbumCoverView albumCoverView;
-
     private List<View> mViewPagerContent;
+    private MusicAlbumCoverView albumCoverView;
+    private LrcView mLrcViewSingle;
 
     private PlayerService<Song> playerService;
 
@@ -74,6 +75,7 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
     private void initViewPager(){
         View coverView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_play_page_cover, null);
         albumCoverView = coverView.findViewById(R.id.album_cover_view);
+        mLrcViewSingle = coverView.findViewById(R.id.lrc_view_single);
         mViewPagerContent = new ArrayList<>(1);
         mViewPagerContent.add(coverView);
 
@@ -96,7 +98,17 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
         setToolBarTitle(song.getTitle());
 
         MusicProvider musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(getContext());
-        Bitmap albumBitmap = musicProvider.getAlbumImage(getContext(),song.getAlbumId());
+        Lrc lrc = musicProvider.findLrcBySong(song);
+        if (lrc != null){
+            LogUtil.i(TAG,"lrc type : " + lrc.getType());
+            if (Lrc.LrcType.LOCAL == lrc.getType()){
+                File lrcFile = lrc.getLrcFile();
+                if (lrcFile.exists()){
+                    LogUtil.i(TAG,"lrc path : " + lrcFile.getPath());
+                }
+            }
+        }
+        Bitmap albumBitmap = musicProvider.getAlbumImage(getContext(),song);
         if (albumBitmap == null){
             albumBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.default_artist);
         }

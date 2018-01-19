@@ -1,17 +1,11 @@
-package com.danny.player.utils;
+package com.danny.media.library.utils;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-
-import java.io.File;
 
 /**
  * Created by tingw on 2018/1/18.

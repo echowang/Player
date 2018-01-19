@@ -16,8 +16,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.danny.media.library.utils.ImageUtils;
 import com.danny.player.R;
-import com.danny.player.utils.ImageUtils;
 
 /**
  * Created by tingw on 2018/1/18.
@@ -189,7 +189,8 @@ public class MusicAlbumCoverView extends View implements ValueAnimator.AnimatorU
         if (bitmap == null){
             return;
         }
-        mCoverBitmap = bitmap;
+        bitmap = ImageUtils.resizeImage(bitmap, getScreenWidth() / 2, getScreenWidth() / 2);
+        mCoverBitmap = ImageUtils.createCircleImage(bitmap);
         mDiscRotation = 0.0f;
         invalidate();
     }

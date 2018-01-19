@@ -1,4 +1,4 @@
-package com.danny.media.library.file;
+package com.danny.media.library.provider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.ChineseToPinyin;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.media.library.utils.StringUtil;
 
 import java.io.File;
@@ -24,6 +26,11 @@ import java.util.Map;
  */
 
 public abstract class MusicProvider{
+    private final static String TAG = MusicProvider.class.getSimpleName();
+
+    private final static String ALBUM_DIR = "album";
+    private final static String ALBUM_SUFFIX = ".jpg";
+
     protected Context context;
     protected List<Song> songList = new ArrayList<>();
     protected Map<String,List<Song>> singerList = new HashMap<>();
@@ -45,9 +52,10 @@ public abstract class MusicProvider{
     }
 
     /**
-     * 对外接口，启动加载本地音乐
+     * 对外接口，启动查找本地音乐
      */
     public void loadMusic(){
+        LogUtil.i(TAG,"loadMusic");
         if (IMusicScanListener != null){
             IMusicScanListener.onStartScan();
         }
@@ -96,17 +104,69 @@ public abstract class MusicProvider{
         return folderList;
     }
 
-//    public List<Song> getMusicList(int startPosition,int endPosition){
-//        return songList.subList(startPosition,endPosition);
-//    }
-
     /**
-     * 通过 专辑id 查询专辑图片
-     * @param albumId
+     * 根据歌曲查找歌词文件
+     * @param song
      * @return
      */
-    public Bitmap getAlbumImage(Context context,long albumId){
-        String albumArt = getAlbumArt(context,String.valueOf(albumId));
+    public Lrc findLrcBySong(Song song){
+        if (song == null){
+            return null;
+        }
+        LogUtil.i(TAG,"findLrcBySong");
+        File songFile = new File(song.getPath());
+        if (songFile.exists()){
+            String parentPath = songFile.getParentFile().getParent();
+            String name = song.getTitle() + "_" + song.getArtist();
+            String lrcPath = parentPath + File.separator + Lrc.DIR + File.separator + name + Lrc.SUFFIX;
+            LogUtil.i(TAG,"findLrcBySong parentPath : " + parentPath);
+            LogUtil.i(TAG,"findLrcBySong name : " + name);
+            LogUtil.i(TAG,"findLrcBySong lrcPath : " + lrcPath);
+            File lrcFile = new File(lrcPath);
+            if (lrcFile.exists()){
+                Lrc lrc = new Lrc();
+                lrc.setType(Lrc.LrcType.LOCAL);
+                lrc.setLrcFile(lrcFile);
+                return lrc;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 通过 歌曲 查询专辑图片
+     * @param song
+     * @return
+     */
+    public Bitmap getAlbumImage(Context context,Song song){
+        if (context == null || song == null){
+            return null;
+        }
+        long albumId = song.getAlbumId();
+        Bitmap bitmap = getAlbumArt(context,String.valueOf(albumId));
+        if (bitmap == null){
+            bitmap = getAlbumArtFromFile(song);
+        }
+        return bitmap;
+    }
+
+    /**
+     * 从媒体库读取专辑图片
+     * @param context
+     * @param album_id
+     * @return
+     */
+    private Bitmap getAlbumArt(Context context,String album_id) {
+        String mUriAlbums = "content://media/external/audio/albums";
+        String[] projection = new String[] { "album_art" };
+        Cursor cur = context.getContentResolver().query(Uri.parse(mUriAlbums + "/" + album_id),  projection, null, null, null);
+        String albumArt = null;
+        if (cur.getCount() > 0 && cur.getColumnCount() > 0)
+        {  cur.moveToNext();
+            albumArt = cur.getString(0);
+        }
+        cur.close();
+
         if (TextUtils.isEmpty(albumArt)){
             return null;
         }
@@ -114,18 +174,25 @@ public abstract class MusicProvider{
         return bitmap;
     }
 
-    private String getAlbumArt(Context context,String album_id)
-    {
-        String mUriAlbums = "content://media/external/audio/albums";
-        String[] projection = new String[] { "album_art" };
-        Cursor cur = context.getContentResolver().query(Uri.parse(mUriAlbums + "/" + album_id),  projection, null, null, null);
-        String album_art = null;
-        if (cur.getCount() > 0 && cur.getColumnCount() > 0)
-        {  cur.moveToNext();
-            album_art = cur.getString(0);
+    /**
+     * 从文件中读取专辑图片
+     * @param song
+     * @return
+     */
+    private Bitmap getAlbumArtFromFile(Song song){
+        LogUtil.i(TAG,"getAlbumArtFromFile");
+        File songFile = new File(song.getPath());
+        if (songFile.exists()){
+            String parentPath = songFile.getParentFile().getParent();
+            String name = song.getAlbum() + "_" + song.getArtist();
+            String albumPath = parentPath + File.separator + ALBUM_DIR + File.separator + name + ALBUM_SUFFIX;
+            File albumFile = new File(albumPath);
+            if (albumFile.exists()){
+                Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
+                return bitmap;
+            }
         }
-        cur.close();
-        return album_art;
+        return null;
     }
 
     /**
@@ -200,7 +267,6 @@ public abstract class MusicProvider{
 
     public interface IMusicScanListener {
         void onStartScan();
-//        void onMusicSourceChange(int startPosition,int endPosition);
         void onScanFinish();
     }
 }

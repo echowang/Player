@@ -1,11 +1,11 @@
 package com.danny.media.library.service;
 
 import android.content.Intent;
-import android.util.Log;
 
-import com.danny.media.library.file.MediaProviderFactory;
-import com.danny.media.library.file.MusicProvider;
+import com.danny.media.library.provider.MediaProviderFactory;
+import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.utils.LogUtil;
 
 import java.util.List;
 
@@ -29,18 +29,18 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG,"onCreate");
+        LogUtil.i(TAG,"onCreate");
 
         musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(this);
         musicProvider.setIMusicScanListener(new MusicProvider.IMusicScanListener() {
             @Override
             public void onStartScan() {
-                Log.i(TAG,"onStartScan");
+                LogUtil.i(TAG,"onStartScan");
             }
 
             @Override
             public void onScanFinish() {
-                Log.i(TAG,"onScanFinish");
+                LogUtil.i(TAG,"onScanFinish");
                 songList = musicProvider.getMusicList();
                 if (refreshListener != null){
                     refreshListener.onRefreshMusicList(songList);
@@ -50,6 +50,8 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
         AudioFocusManager.getInstance().requestAudioFocus(this);
         AudioFocusManager.getInstance().getObservable().subscribe(new Observer<Boolean>() {
+            private boolean needPlay;
+
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -59,16 +61,15 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
             public void onNext(Boolean focus) {
                 if (focus){
                     if (musicPlayer != null){
-                        if (musicPlayer.isPausing()){
+                        if (musicPlayer.isPausing() && needPlay){
+                            needPlay = false;
                             resume();
-                        }else if (autoPlay){
-                            Song playSong = musicPlayer.getPlaySong();
-                            play(playSong);
                         }
                     }
                 }else{
                     if (musicPlayer != null && musicPlayer.isPlaying()){
-                        stop();
+                        needPlay = true;
+                        pause();
                     }
                 }
             }
@@ -89,7 +90,7 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG,"onStartCommand");
+        LogUtil.i(TAG,"onStartCommand");
 
         if (musicProvider != null){
             musicProvider.loadMusic();
@@ -124,14 +125,19 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     @Override
     public void pause() {
-        autoPlay = false;
-        musicPlayer.pause();
+        if (musicPlayer.isPlaying()){
+            autoPlay = false;
+            musicPlayer.pause();
+        }
+
     }
 
     @Override
     public void resume() {
-        autoPlay = true;
-        musicPlayer.resume();
+        if (musicPlayer.isPausing()){
+            autoPlay = true;
+            musicPlayer.resume();
+        }
     }
 
     @Override
@@ -184,7 +190,7 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     @Override
     public void onDestroy() {
-        Log.i(TAG,"onDestroy");
+        LogUtil.i(TAG,"onDestroy");
 
         AudioFocusManager.getInstance().abanodAudioFocus(this);
         super.onDestroy();

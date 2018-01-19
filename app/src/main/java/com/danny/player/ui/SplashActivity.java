@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.danny.media.library.service.MusicPlayerService;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 
 import java.util.ArrayList;
@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
@@ -55,12 +53,12 @@ public class SplashActivity extends BaseAcivity {
         for (String permisson : permissions){
             int result = ActivityCompat.checkSelfPermission(this, permisson);
             if (result != PackageManager.PERMISSION_GRANTED){
-                Log.d(TAG,"permisson : " + permisson);
+                LogUtil.d(TAG,"permisson : " + permisson);
                 notGrantedPermissions.add(permisson);
             }
         }
 
-        Log.d(TAG,"checkSelfPermission notGrantedPermissions : " + notGrantedPermissions.size());
+        LogUtil.d(TAG,"checkSelfPermission notGrantedPermissions : " + notGrantedPermissions.size());
         if (notGrantedPermissions.isEmpty()){
             startMusicService();
         }else{
@@ -82,7 +80,7 @@ public class SplashActivity extends BaseAcivity {
                 }
             }
 
-            Log.d(TAG,"onRequestPermissionsResult notGrantedPermissions : " + notGrantedPermissions.size());
+            LogUtil.d(TAG,"onRequestPermissionsResult notGrantedPermissions : " + notGrantedPermissions.size());
             if (notGrantedPermissions.isEmpty()){
                 startMusicService();
             }else {
@@ -92,7 +90,7 @@ public class SplashActivity extends BaseAcivity {
     }
 
     private void startMusicService(){
-        Log.d(TAG,"startMusicMainActivity");
+        LogUtil.d(TAG,"startMusicMainActivity");
         if (!serviceIsWorked(MusicPlayerService.class)){
             Intent intent = new Intent(this, MusicPlayerService.class);
             startService(intent);
@@ -109,7 +107,7 @@ public class SplashActivity extends BaseAcivity {
     }
 
     private void startMusicMainActivity(){
-        Log.d(TAG,"startMusicMainActivity");
+        LogUtil.d(TAG,"startMusicMainActivity");
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
         finish();
