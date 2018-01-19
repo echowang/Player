@@ -1,5 +1,8 @@
 package com.danny.media.library.utils;
 
+import android.text.format.DateUtils;
+
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,7 +10,7 @@ import java.util.regex.Pattern;
  * Created by tingw on 2018/1/2.
  */
 
-public class Util {
+public class StringUtil {
     /**
      *  判断是否是中文
      */
@@ -50,5 +53,19 @@ public class Util {
 
         float result = count / chLength;
         return (result > 0.4);
+    }
+
+    /**
+     * 将播放时长转化为时间格式的字符串
+     * @param duration
+     * @return
+     */
+    public static String durationToTimeString(int duration){
+        int m = (int) (duration / DateUtils.MINUTE_IN_MILLIS);
+        int s = (int) ((duration / DateUtils.SECOND_IN_MILLIS) % 60);
+        String mm = String.format(Locale.getDefault(), "%02d", m);
+        String ss = String.format(Locale.getDefault(), "%02d", s);
+        String time = mm + ":" + ss;
+        return time;
     }
 }

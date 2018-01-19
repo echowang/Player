@@ -6,12 +6,13 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.danny.media.library.file.MediaProviderFactory;
@@ -23,39 +24,41 @@ import com.danny.player.R;
  * Created by tingw on 2018/1/16.
  */
 
-public class MusicControllerBar extends LinearLayout implements View.OnClickListener {
+public class MusicListControllerBar extends LinearLayout implements View.OnClickListener {
+    private final static String TAG = MusicListControllerBar.class.getSimpleName();
+
     private View container;
     private ImageView musicIcon;
     private TextView musicName;
     private TextView musicArtist;
     private ImageButton playBtn;
     private ImageButton netxtBtn;
-    private SeekBar musicSeekBar;
+    private ProgressBar musicSeekBar;
 
     private MusicControllerBarListener controllerBarListener;
 
-    public MusicControllerBar(Context context) {
+    public MusicListControllerBar(Context context) {
         this(context,null);
     }
 
-    public MusicControllerBar(Context context, @Nullable AttributeSet attrs) {
+    public MusicListControllerBar(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs,0);
     }
 
-    public MusicControllerBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MusicListControllerBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public MusicControllerBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MusicListControllerBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initView(context);
     }
 
     private void initView(Context context){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        layoutInflater.inflate(R.layout.music_controller_bar,this,true);
+        layoutInflater.inflate(R.layout.music_list_controller_bar,this,true);
 
         container = findViewById(R.id.music_controller_bar);
         musicIcon = findViewById(R.id.music_album_icon);
@@ -122,6 +125,7 @@ public class MusicControllerBar extends LinearLayout implements View.OnClickList
     }
 
     public void updateMusicProgress(int progress){
+        Log.i(TAG,"progress : " + progress);
         musicSeekBar.setProgress(progress);
     }
 

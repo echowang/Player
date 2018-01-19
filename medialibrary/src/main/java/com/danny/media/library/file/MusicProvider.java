@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.ChineseToPinyin;
-import com.danny.media.library.utils.Util;
+import com.danny.media.library.utils.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -137,7 +137,7 @@ public abstract class MusicProvider{
             public int compare(Song lhs, Song rhs) {
                 if (lhs.getTitle().length() > 0 && rhs.getTitle().length() > 0) {
                     //如果两者都是汉字开头,则获取每个汉字的首字母
-                    if (Util.isChinese(lhs.getTitle().charAt(0)) && Util.isChinese(rhs.getTitle().charAt(0))) {
+                    if (StringUtil.isChinese(lhs.getTitle().charAt(0)) && StringUtil.isChinese(rhs.getTitle().charAt(0))) {
                         StringBuilder lhsPY = new StringBuilder();
                         StringBuilder rhsPY = new StringBuilder();
                         for (int i = 0; i < lhs.getTitle().length(); i++) {

@@ -6,6 +6,11 @@
 
     <color name="player_topbar_background">#3BC2EA</color>
     <color name="white">#ffffff</color>
+    <color name="white_8p">#14FFFFFF</color>
+    <color name="white_24p">#3DFFFFFF</color>
+    <color name="white_50p">#80FFFFFF</color>
+    <color name="red">#F44336</color>
+    <color name="red_30p">#4CF44336</color>
     <color name="recycler_background">#FAFAFA</color>
     <color name="recycler_item_pressed">#99999999</color>
     <color name="controller_bar_background">@color/white</color>

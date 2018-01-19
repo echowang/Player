@@ -16,7 +16,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     private PlayerStaue playerStaue = PlayerStaue.STATE_IDLE;    //播放器的状态
     private Song playSong;   //当前正在播放的歌曲
 
-    private PlayerScheduleListener scheduleListener;
+    private PlayerScheduleListener<Song> scheduleListener;
 
     private Handler mHandler;
     private static final long TIME_UPDATE = 800L;
@@ -81,6 +81,11 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     }
 
     @Override
+    public int getPlayProgress() {
+        return mPlayer.getCurrentPosition();
+    }
+
+    @Override
     public boolean isPlaying() {
         return playerStaue == PlayerStaue.STATE_PLAYING;
     }
@@ -125,6 +130,9 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
         playerStaue = PlayerStaue.STATE_PLAYING;
         mPlayer.start();
         mHandler.postDelayed(mPublishRunnable,TIME_UPDATE);
+        if (scheduleListener != null){
+            scheduleListener.OnChangeSource(playSong);
+        }
     }
 
     public Song getPlaySong(){

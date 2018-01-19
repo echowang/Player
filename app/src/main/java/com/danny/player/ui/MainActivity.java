@@ -13,6 +13,8 @@ import com.danny.player.R;
 import com.danny.player.ui.fragment.BaseFragment;
 import com.danny.player.ui.fragment.MusicMainFragment;
 
+import butterknife.BindView;
+
 
 /**
  * Created by tingw on 2018/1/3.
@@ -21,7 +23,8 @@ import com.danny.player.ui.fragment.MusicMainFragment;
 public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEventListener{
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    private Toolbar toolbar;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected int getLayoutId() {
@@ -30,7 +33,6 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
-        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         BaseFragment musicMainFragment = new MusicMainFragment();
@@ -70,9 +72,8 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.replace(R.id.fragment_container,fragment,MusicMainFragment.class.getSimpleName());
+            fragmentTransaction.setCustomAnimations(R.anim.fragment_slide_up,R.anim.fragment_slide_down,R.anim.fragment_slide_up,R.anim.fragment_slide_down);
+            fragmentTransaction.replace(R.id.fragment_container,fragment,fragment.getClass().getSimpleName());
             fragmentTransaction.addToBackStack("player");
             fragmentTransaction.commitAllowingStateLoss();
         }

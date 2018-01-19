@@ -1,10 +1,6 @@
 package com.danny.media.library.service;
 
-import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danny.media.library.file.MediaProviderFactory;
@@ -20,12 +16,11 @@ import io.reactivex.disposables.Disposable;
  * Created by dannywang on 2017/12/29.
  */
 
-public class MusicPlayerService extends Service implements PlayerScheduleListener {
+public class MusicPlayerService extends PlayerService<Song> implements PlayerScheduleListener<Song> {
     private final static String TAG = MusicPlayerService.class.getSimpleName();
 
     private MusicProvider musicProvider;
-    private IMusicUIRefreshListener refreshListener;
-    private MusicPlayerBinder playerBinder;
+    private IServiceUIRefreshListener refreshListener;
     private MusicPlayer musicPlayer;
     private List<Song> songList;
     private int playSongPosition;
@@ -65,15 +60,15 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
                 if (focus){
                     if (musicPlayer != null){
                         if (musicPlayer.isPausing()){
-                            resumeMusic();
+                            resume();
                         }else if (autoPlay){
                             Song playSong = musicPlayer.getPlaySong();
-                            playMusic(playSong);
+                            play(playSong);
                         }
                     }
                 }else{
                     if (musicPlayer != null && musicPlayer.isPlaying()){
-                        stopMusic();
+                        stop();
                     }
                 }
             }
@@ -103,23 +98,88 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        Log.i(TAG,"onBind");
-        if (playerBinder == null){
-            playerBinder = new MusicPlayerBinder();
-        }
-
-        return playerBinder;
+    public void setUIRefreshListener(IServiceUIRefreshListener uiRefreshListener) {
+        this.refreshListener = uiRefreshListener;
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
-        Log.i(TAG,"onUnbind");
+    public List<Song> getPlaySourceList() {
+        return songList;
+    }
 
-        playerBinder = null;
-        return super.onUnbind(intent);
+    @Override
+    public Song getPlaySource() {
+        return musicPlayer.getPlaySong();
+    }
+
+    @Override
+    public void play(Song song) {
+        if (musicPlayer.isPlaying()){
+            musicPlayer.stop();
+        }
+        playSongPosition = songList.indexOf(song);
+        musicPlayer.play(song);
+    }
+
+    @Override
+    public void pause() {
+        autoPlay = false;
+        musicPlayer.pause();
+    }
+
+    @Override
+    public void resume() {
+        autoPlay = true;
+        musicPlayer.resume();
+    }
+
+    @Override
+    public void stop() {
+        musicPlayer.stop();
+    }
+
+    @Override
+    public void next() {
+        int max  = songList.size() - 1;
+        if (playSongPosition == max){
+            playSongPosition = 0;
+        }else if(playSongPosition >= 0 && playSongPosition < max){
+            playSongPosition++;
+        }else{
+            playSongPosition = 0;
+        }
+        Song song = songList.get(playSongPosition);
+        musicPlayer.play(song);
+    }
+
+    @Override
+    public void prev() {
+        int max  = songList.size() - 1;
+        if (playSongPosition == 0){
+            playSongPosition = max;
+        }else if (playSongPosition > 0 && playSongPosition <= max){
+            playSongPosition--;
+        }else{
+            playSongPosition = 0;
+        }
+        Song song = songList.get(playSongPosition);
+        musicPlayer.play(song);
+    }
+
+    @Override
+    public int getPlayProgress() {
+        return musicPlayer.getPlayProgress();
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return musicPlayer.isPlaying();
+    }
+
+    @Override
+    public boolean isAutoPlay() {
+        return autoPlay;
     }
 
     @Override
@@ -128,10 +188,6 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
 
         AudioFocusManager.getInstance().abanodAudioFocus(this);
         super.onDestroy();
-    }
-
-    public void setRefreshListener(IMusicUIRefreshListener refreshListener) {
-        this.refreshListener = refreshListener;
     }
 
     @Override
@@ -152,108 +208,13 @@ public class MusicPlayerService extends Service implements PlayerScheduleListene
 
     @Override
     public void OnCompletion() {
-        nextMusic();
+        next();
     }
 
-    private void playMusic(Song song){
-        if (song == null){
-            return;
-        }
-        if (musicPlayer.isPlaying()){
-            musicPlayer.stop();
-        }
-        playSongPosition = songList.indexOf(song);
-        musicPlayer.play(song);
-
+    @Override
+    public void OnChangeSource(Song song) {
         if (refreshListener != null){
             refreshListener.onMusicChange(song);
         }
-    }
-
-    private void pauseMusic(){
-        autoPlay = false;
-        musicPlayer.pause();
-    }
-
-    private void resumeMusic(){
-        autoPlay = true;
-        musicPlayer.resume();
-    }
-
-    private void stopMusic(){
-        musicPlayer.stop();
-    }
-
-    private void prevMusic(){
-
-    }
-
-    private void nextMusic(){
-        int max  = songList.size() - 1;
-        if (playSongPosition == max){
-            playSongPosition = 0;
-        }else if(playSongPosition >= 0 && playSongPosition < max){
-            playSongPosition++;
-        }else{
-            playSongPosition = 0;
-        }
-        Song song = songList.get(playSongPosition);
-        musicPlayer.play(song);
-        if (refreshListener != null){
-            refreshListener.onMusicChange(song);
-        }
-    }
-
-    public class MusicPlayerBinder extends Binder{
-        public void setIMusicUIRefreshListener(IMusicUIRefreshListener refreshListener){
-            setRefreshListener(refreshListener);
-        }
-
-        public List<Song> getMusicList(){
-            return songList;
-        }
-
-        public Song getPlayingMusic(){
-            return musicPlayer.getPlaySong();
-        }
-
-        public void play(Song song){
-            playMusic(song);
-        }
-
-        public void pause(){
-            pauseMusic();
-        }
-
-        public void resume(){
-            resumeMusic();
-        }
-
-        public void stop(){
-            stopMusic();
-        }
-
-        public void prev(){
-            prevMusic();
-        }
-
-        public void next(){
-            nextMusic();
-        }
-
-        public boolean isPlaying(){
-            return musicPlayer.isPlaying();
-        }
-
-        public boolean isAutoPlay(){
-            return autoPlay;
-        }
-    }
-
-    public interface IMusicUIRefreshListener{
-        void onRefreshMusicList(List<Song> songList);
-        void onPublish(Song song,int progress);
-        void onBufferingUpdate(Song song,int percent);
-        void onMusicChange(Song song);
     }
 }

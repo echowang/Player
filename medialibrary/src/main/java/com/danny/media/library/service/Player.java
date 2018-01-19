@@ -12,6 +12,7 @@ public interface Player {
     void resume();
     void stop();
     void seekTo(int msec);
+    int getPlayProgress();
     boolean isPlaying();
     boolean isPausing();
     boolean isPreparing();

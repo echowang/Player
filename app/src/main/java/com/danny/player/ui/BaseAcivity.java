@@ -6,6 +6,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.danny.player.application.PlayerApplication;
+
+import butterknife.ButterKnife;
+
 /**
  * Created by tingw on 2018/1/3.
  */
@@ -18,6 +22,9 @@ public abstract class BaseAcivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+
+        ButterKnife.bind(this);
+
         initView(savedInstanceState);
     }
 

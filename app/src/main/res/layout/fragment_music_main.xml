@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.danny.player.ui.widget.MusicControllerBar
+    <com.danny.player.ui.widget.MusicListControllerBar
         android:id="@+id/music_controller_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/controller_bar_height"
+        android:layout_height="@dimen/controller_list_bar_height"
         android:layout_alignParentBottom="true"/>
 
     <android.support.v7.widget.RecyclerView

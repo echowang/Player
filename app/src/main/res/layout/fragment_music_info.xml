@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Music info fragment"/>
+    android:layout_height="match_parent"
+    android:background="@mipmap/play_default_bg">
+
+    <ImageView
+        android:id="@+id/music_play_container_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <com.danny.player.ui.widget.MusicPlayControllerBar
+        android:id="@+id/music_play_controller_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/controller_play_bar_height"
+        android:layout_alignParentBottom="true"/>
+
+    <com.tmall.ultraviewpager.UltraViewPager
+        android:id="@+id/music_play_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/music_play_controller_bar"/>
 </RelativeLayout>

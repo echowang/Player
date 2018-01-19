@@ -5,7 +5,7 @@ package com.danny.media.library.service;
  * 播放音乐的进度监听
  */
 
-public interface PlayerScheduleListener {
+public interface PlayerScheduleListener<T> {
     /**
      * 更新进度
      */
@@ -20,4 +20,9 @@ public interface PlayerScheduleListener {
      * 播放结束
      */
     void OnCompletion();
+
+    /**
+     * 切换正在播放的源
+     */
+    void OnChangeSource(T t);
 }

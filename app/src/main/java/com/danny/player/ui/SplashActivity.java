@@ -1,6 +1,8 @@
 package com.danny.player.ui;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,12 +10,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.danny.media.library.service.MusicPlayerService;
 import com.danny.player.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 public class SplashActivity extends BaseAcivity {
     private final static String TAG = SplashActivity.class.getSimpleName();
@@ -23,6 +35,9 @@ public class SplashActivity extends BaseAcivity {
             Manifest.permission.READ_EXTERNAL_STORAGE};
     private List<String> notGrantedPermissions = new ArrayList<>();
 
+    @BindView(R.id.player_copyright)
+    TextView copyrightText;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_splash;
@@ -30,6 +45,9 @@ public class SplashActivity extends BaseAcivity {
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        copyrightText.setText(getString(R.string.copyright,year));
+
         checkSelfPermission();
     }
 
@@ -45,7 +63,6 @@ public class SplashActivity extends BaseAcivity {
         Log.d(TAG,"checkSelfPermission notGrantedPermissions : " + notGrantedPermissions.size());
         if (notGrantedPermissions.isEmpty()){
             startMusicService();
-            startMusicMainActivity();
         }else{
             ActivityCompat.requestPermissions(this,notGrantedPermissions.toArray(new String[notGrantedPermissions.size()]), PERMISSION_REQUEST_CODE);
         }
@@ -68,7 +85,6 @@ public class SplashActivity extends BaseAcivity {
             Log.d(TAG,"onRequestPermissionsResult notGrantedPermissions : " + notGrantedPermissions.size());
             if (notGrantedPermissions.isEmpty()){
                 startMusicService();
-                startMusicMainActivity();
             }else {
                 finish();
             }
@@ -77,8 +93,19 @@ public class SplashActivity extends BaseAcivity {
 
     private void startMusicService(){
         Log.d(TAG,"startMusicMainActivity");
-        Intent intent = new Intent(this, MusicPlayerService.class);
-        startService(intent);
+        if (!serviceIsWorked(MusicPlayerService.class)){
+            Intent intent = new Intent(this, MusicPlayerService.class);
+            startService(intent);
+        }
+
+        Observable.timer(1,TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        startMusicMainActivity();
+                    }
+                });
     }
 
     private void startMusicMainActivity(){
@@ -86,5 +113,29 @@ public class SplashActivity extends BaseAcivity {
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    /**
+     * 判断Service是否已经启动
+     * @param clazz
+     * @return
+     */
+    private boolean serviceIsWorked(Class clazz) {
+        if (clazz == null){
+            return false;
+        }
+        String className = clazz.getName();
+        ActivityManager myManager = (ActivityManager) this
+                .getApplicationContext().getSystemService(
+                        Context.ACTIVITY_SERVICE);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
+                .getRunningServices(30);
+        for (int i = 0; i < runningService.size(); i++) {
+            if (runningService.get(i).service.getClassName().toString()
+                    .equals(className)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

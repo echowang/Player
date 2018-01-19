@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="top_bar_height">48dp</dimen>
-    <dimen name="controller_bar_height">80dp</dimen>
+    <dimen name="controller_list_bar_height">60dp</dimen>
+    <dimen name="controller_play_bar_height">100dp</dimen>
     <dimen name="controller_bar_margin_right">10dp</dimen>
     <dimen name="controller_bar_margin_left">10dp</dimen>
     <dimen name="controller_bar_item_margin_left">10dp</dimen>
@@ -14,4 +15,7 @@
 
     <dimen name="recyclerview_item_icon_width">44dp</dimen>
     <dimen name="recyclerview_item_icon_hight">44dp</dimen>
+
+    <dimen name="music_album_cover_margin_left">16dp</dimen>
+    <dimen name="music_album_cover_margin_right">16dp</dimen>
 </resources>

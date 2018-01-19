@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 
 import com.danny.media.library.model.Song;
-import com.danny.media.library.utils.Util;
+import com.danny.media.library.utils.StringUtil;
 
 /**
  * Created by tingw on 2018/1/2.
@@ -56,7 +56,7 @@ public class MediaMusicProvider extends MusicProvider {
                 song.setAlbum(song.getAlbum().replace("\u007F",""));
                 song.setArtist(song.getArtist().replace("<unknown>",DEFAULT_SINGER));
 
-                if (Util.isGarbledCode(song.getTitle()) || Util.isGarbledCode(song.getArtist()) || Util.isGarbledCode(song.getAlbum())) {
+                if (StringUtil.isGarbledCode(song.getTitle()) || StringUtil.isGarbledCode(song.getArtist()) || StringUtil.isGarbledCode(song.getAlbum())) {
                     if (song.getFileName() != null && song.getFileName().contains("-")) {
                         String[] split = song.getFileName().split("-");
                         String[] split1 = split[1].split("\\.");
