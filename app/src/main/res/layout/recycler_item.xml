@@ -14,7 +14,6 @@
             android:layout_width="@dimen/recyclerview_item_icon_width"
             android:layout_height="@dimen/recyclerview_item_icon_hight"
             android:layout_centerVertical="true"
-            android:scaleType="centerInside"
             android:src="@mipmap/default_artist"/>
 
         <ImageView android:id="@+id/item_music_play_animation"

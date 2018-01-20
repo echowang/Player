@@ -1,10 +1,9 @@
 package com.danny.player.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
-import com.danny.player.application.PlayerAppGlideModule;
+import com.danny.player.glide.GlideApp;
+import com.danny.player.glide.GlideRoundTransform;
 
 import java.util.List;
 
@@ -172,17 +173,17 @@ public class MusicListAdpter extends RecyclerView.Adapter {
                 itemAnimation.setVisibility(View.GONE);
             }
 
-//            Bitmap albumBitmap = musicProvider.getAlbumImage(mContext,song);
-//            if (albumBitmap == null){
-//                itemAlbumIcon.setImageResource(R.mipmap.default_artist);
-//            }else{
-//                itemAlbumIcon.setImageBitmap(albumBitmap);
-//            }
-            String albumPath = musicProvider.getAlbumPath(mContext,song);
-            if (TextUtils.isEmpty(albumPath)){
+            Uri albumUri = musicProvider.getAlbumPath(mContext,song);
+            if (albumUri == null){
                 Glide.with(mContext).load(R.mipmap.default_artist).into(itemAlbumIcon);
             }else{
-                Glide.with(mContext).load(albumPath).into(itemAlbumIcon);
+                LogUtil.i(TAG,song.getTitle() + " : " + albumUri.getPath());
+                GlideApp.with(mContext)
+                        .load(albumUri)
+                        .placeholder(R.mipmap.default_artist)
+                        .error(R.mipmap.default_artist)
+                        .dontAnimate()
+                        .into(itemAlbumIcon);
             }
             itemNameText.setText(song.getTitle());
             itemDescText.setText(song.getArtist() + "-" + song.getAlbum());
