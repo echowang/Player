@@ -142,21 +142,46 @@ public abstract class MusicProvider{
         if (context == null || song == null){
             return null;
         }
-        long albumId = song.getAlbumId();
-        Bitmap bitmap = getAlbumArt(context,String.valueOf(albumId));
+
+        Bitmap bitmap = null;
+        String albumArt = getAlbumArt(context,song);
+        if (!TextUtils.isEmpty(albumArt)){
+            bitmap = BitmapFactory.decodeFile(albumArt);
+        }
+
         if (bitmap == null){
-            bitmap = getAlbumArtFromFile(song);
+            String albumPath = getAlbumArtFromFile(song);
+            bitmap = BitmapFactory.decodeFile(albumPath);
         }
         return bitmap;
     }
 
     /**
-     * 从媒体库读取专辑图片
-     * @param context
-     * @param album_id
+     * 通过 歌曲 查询专辑图片路径
+     * @param song
      * @return
      */
-    private Bitmap getAlbumArt(Context context,String album_id) {
+    public String getAlbumPath(Context context,Song song){
+        if (context == null || song == null){
+            return null;
+        }
+
+        String albumPath = getAlbumArt(context,song);
+        if(albumPath == null){
+            albumPath = getAlbumArtFromFile(song);
+        }
+
+        return albumPath;
+    }
+
+    /**
+     * 从媒体库读取专辑图片
+     * @param context
+     * @param song
+     * @return
+     */
+    private String getAlbumArt(Context context,Song song) {
+        String album_id = String.valueOf(song.getAlbumId());
         String mUriAlbums = "content://media/external/audio/albums";
         String[] projection = new String[] { "album_art" };
         Cursor cur = context.getContentResolver().query(Uri.parse(mUriAlbums + "/" + album_id),  projection, null, null, null);
@@ -167,19 +192,15 @@ public abstract class MusicProvider{
         }
         cur.close();
 
-        if (TextUtils.isEmpty(albumArt)){
-            return null;
-        }
-        Bitmap bitmap = BitmapFactory.decodeFile(albumArt);
-        return bitmap;
+        return albumArt;
     }
 
     /**
-     * 从文件中读取专辑图片
+     * 从文件中读取专辑图片地址
      * @param song
      * @return
      */
-    private Bitmap getAlbumArtFromFile(Song song){
+    private String getAlbumArtFromFile(Song song){
         LogUtil.i(TAG,"getAlbumArtFromFile");
         File songFile = new File(song.getPath());
         if (songFile.exists()){
@@ -188,8 +209,7 @@ public abstract class MusicProvider{
             String albumPath = parentPath + File.separator + ALBUM_DIR + File.separator + name + ALBUM_SUFFIX;
             File albumFile = new File(albumPath);
             if (albumFile.exists()){
-                Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
-                return bitmap;
+                return albumPath;
             }
         }
         return null;

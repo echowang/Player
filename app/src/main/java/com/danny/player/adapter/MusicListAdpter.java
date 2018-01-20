@@ -4,17 +4,20 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
+import com.danny.player.application.PlayerAppGlideModule;
 
 import java.util.List;
 
@@ -169,11 +172,17 @@ public class MusicListAdpter extends RecyclerView.Adapter {
                 itemAnimation.setVisibility(View.GONE);
             }
 
-            Bitmap albumBitmap = musicProvider.getAlbumImage(mContext,song);
-            if (albumBitmap == null){
-                itemAlbumIcon.setImageResource(R.mipmap.default_artist);
+//            Bitmap albumBitmap = musicProvider.getAlbumImage(mContext,song);
+//            if (albumBitmap == null){
+//                itemAlbumIcon.setImageResource(R.mipmap.default_artist);
+//            }else{
+//                itemAlbumIcon.setImageBitmap(albumBitmap);
+//            }
+            String albumPath = musicProvider.getAlbumPath(mContext,song);
+            if (TextUtils.isEmpty(albumPath)){
+                Glide.with(mContext).load(R.mipmap.default_artist).into(itemAlbumIcon);
             }else{
-                itemAlbumIcon.setImageBitmap(albumBitmap);
+                Glide.with(mContext).load(albumPath).into(itemAlbumIcon);
             }
             itemNameText.setText(song.getTitle());
             itemDescText.setText(song.getArtist() + "-" + song.getAlbum());

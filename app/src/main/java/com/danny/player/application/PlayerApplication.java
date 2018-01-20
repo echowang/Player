@@ -1,7 +1,9 @@
 package com.danny.player.application;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.support.multidex.MultiDex;
 
 import com.danny.media.library.model.Song;
 import com.danny.media.library.service.MusicPlayerService;
@@ -24,6 +26,12 @@ public class PlayerApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public void setMusicPlayerService(PlayerService<Song> playerService){
