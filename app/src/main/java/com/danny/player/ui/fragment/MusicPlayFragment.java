@@ -17,6 +17,7 @@ import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.adapter.PlayPagerAdapter;
 import com.danny.player.application.PlayerApplication;
+import com.danny.player.glide.PlayerGlide;
 import com.danny.player.ui.widget.MusicAlbumCoverView;
 import com.danny.player.ui.widget.MusicPlayControllerBar;
 import com.tmall.ultraviewpager.UltraViewPager;
@@ -73,6 +74,8 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
     }
 
     private void initViewPager(){
+        PlayerGlide.loadLocalBlurImage(getContext(),R.mipmap.play_default_bg,4,3,containerBgView);
+
         View coverView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_play_page_cover, null);
         albumCoverView = coverView.findViewById(R.id.album_cover_view);
         mLrcViewSingle = coverView.findViewById(R.id.lrc_view_single);
@@ -105,6 +108,7 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
                 File lrcFile = lrc.getLrcFile();
                 if (lrcFile.exists()){
                     LogUtil.i(TAG,"lrc path : " + lrcFile.getPath());
+                    mLrcViewSingle.loadLrc(lrcFile);
                 }
             }
         }
@@ -154,6 +158,9 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
     @Override
     public void onPublish(Song song, int progress) {
         musicPlayControllerBar.updatePlayProgress(progress);
+        if (mLrcViewSingle.hasLrc()){
+            mLrcViewSingle.updateTime(progress);
+        }
     }
 
     @Override

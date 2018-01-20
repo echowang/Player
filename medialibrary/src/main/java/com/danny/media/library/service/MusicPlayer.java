@@ -19,7 +19,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     private PlayerScheduleListener<Song> scheduleListener;
 
     private Handler mHandler;
-    private static final long TIME_UPDATE = 800L;
+    private static final long TIME_UPDATE = 500L;
     private Runnable mPublishRunnable = new Runnable(){
         @Override
         public void run() {
@@ -130,7 +130,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     private void startPlaying(){
         playerStaue = PlayerStaue.STATE_PLAYING;
         mPlayer.start();
-        mHandler.postDelayed(mPublishRunnable,TIME_UPDATE);
+        mHandler.post(mPublishRunnable);
         if (scheduleListener != null){
             scheduleListener.OnChangeSource(playSong);
         }

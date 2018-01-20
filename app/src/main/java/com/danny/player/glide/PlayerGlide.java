@@ -82,25 +82,19 @@ public class PlayerGlide {
     /**
      * 将国图片模糊化
      * @param context
-     * @param placeholder
-     * @param error
-     * @param imagePath
      * @param radiu
      * @param sampling
      * @param imageView
      */
-    public static void loadLocalBlurImage(Context context, int placeholder, int error, String imagePath, int radiu,int sampling, ImageView imageView){
-        if (context == null || placeholder == 0 || error == 0 || TextUtils.isEmpty(imagePath) || imageView == null){
+    public static void loadLocalBlurImage(Context context, int image, int radiu,int sampling, ImageView imageView){
+        if (context == null || image == 0 || imageView == null){
             return;
         }
 
         GlideApp.with(context)
-                .load(new File(imagePath))
+                .load(image)
                 .centerCrop()
                 .transform(new GlideBlurTransformation(context,radiu,sampling))
-                .placeholder(placeholder)
-                .error(error)
-                .fallback(error)
                 .dontAnimate()
                 .into(imageView);
     }

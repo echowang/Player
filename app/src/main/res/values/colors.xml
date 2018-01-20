@@ -14,4 +14,6 @@
     <color name="recycler_background">#FAFAFA</color>
     <color name="recycler_item_pressed">#99999999</color>
     <color name="controller_bar_background">@color/white</color>
+    <color name="lrc_text_normal">@color/white</color>
+    <color name="lrc_text_current">@color/colorAccent</color>
 </resources>

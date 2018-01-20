@@ -18,11 +18,11 @@
         android:id="@+id/lrc_view_single"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_marginBottom="10dp"
-        lrc:lrcAnimationDuration="1000"
-        lrc:lrcCurrentTextColor="@color/white"
+        android:layout_marginBottom="20dp"
+        lrc:lrcAnimationDuration="500"
+        lrc:lrcCurrentTextColor="@color/lrc_text_current"
         lrc:lrcDividerHeight="10dp"
-        lrc:lrcNormalTextColor="@color/white"
-        lrc:lrcPadding="40dp"
+        lrc:lrcNormalTextColor="@color/lrc_text_normal"
+        lrc:lrcPadding="20dp"
         lrc:lrcTextSize="@dimen/music_lrc_text_size_common" />
 </LinearLayout>
