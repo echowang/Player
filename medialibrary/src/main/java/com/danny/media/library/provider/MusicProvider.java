@@ -1,10 +1,13 @@
 package com.danny.media.library.provider;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.danny.media.library.model.Lrc;
@@ -38,11 +41,30 @@ public abstract class MusicProvider{
     protected Map<String,List<Song>> folderList = new HashMap<>();
     protected IMusicScanListener IMusicScanListener;
 
+    protected boolean isScanning = false;
+
     public MusicProvider(Context context){
         this.context = context;
+
+        scanMediaResources();
     }
 
-    protected abstract void scanMediaResources();
+    private void scanMediaResources(){
+        isScanning = true;
+        MediaScannerConnection.scanFile(context,
+                new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator }, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+
+                    }
+                });
+    }
+
+    protected boolean isScanning(){
+        return isScanning;
+    }
+
+    protected abstract void queryMediaResources();
 
     private void clear(){
         songList.clear();
@@ -60,7 +82,7 @@ public abstract class MusicProvider{
             IMusicScanListener.onStartScan();
         }
         clear();
-        scanMediaResources();
+        queryMediaResources();
         sortList();
         categoryMusicList();
         if (IMusicScanListener != null){
@@ -161,17 +183,20 @@ public abstract class MusicProvider{
      * @param song
      * @return
      */
-    public String getAlbumPath(Context context,Song song){
+    public Uri getAlbumPath(Context context,Song song){
         if (context == null || song == null){
             return null;
         }
 
-        String albumPath = getAlbumArt(context,song);
+        String albumPath = getAlbumArtFromFile(song);
         if(albumPath == null){
-            albumPath = getAlbumArtFromFile(song);
+            albumPath = getAlbumArt(context,song);
         }
 
-        return albumPath;
+        if(!TextUtils.isEmpty(albumPath)){
+            return Uri.parse(albumPath);
+        }
+        return null;
     }
 
     /**

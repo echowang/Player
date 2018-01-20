@@ -2,7 +2,9 @@ package com.danny.player.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
@@ -182,7 +188,20 @@ public class MusicListAdpter extends RecyclerView.Adapter {
                         .load(albumUri)
                         .placeholder(R.mipmap.default_artist)
                         .error(R.mipmap.default_artist)
-                        .dontAnimate()
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                LogUtil.i(TAG,"onLoadFailed");
+                                e.printStackTrace();
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                LogUtil.i(TAG,"onResourceReady");
+                                return false;
+                            }
+                        })
                         .into(itemAlbumIcon);
             }
             itemNameText.setText(song.getTitle());

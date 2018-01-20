@@ -14,7 +14,7 @@ public class RecursionMusicProvider extends MusicProvider {
     }
 
     @Override
-    public void scanMediaResources() {
+    public void queryMediaResources() {
 
     }
 }
