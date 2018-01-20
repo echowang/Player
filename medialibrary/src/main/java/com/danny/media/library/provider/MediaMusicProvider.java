@@ -23,10 +23,17 @@ public class MediaMusicProvider extends MusicProvider {
 
     @Override
     protected void queryMediaResources() {
-        if (isScanning()){
-            //正在扫描过程中不用查询数据
-        }
+//        while (isScanning()){
+//            //正在扫描过程中不用查询数据
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
         //查询媒体库数据
+        String selection = MediaStore.Audio.Media.IS_MUSIC+"=?";
+        String[] selectionArgs = new String[]{"1"};
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Media._ID,                    //0歌曲ID
@@ -39,7 +46,7 @@ public class MediaMusicProvider extends MusicProvider {
                         MediaStore.Audio.Media.DURATION,                    //7歌曲的总播放时长
                         MediaStore.Audio.Media.SIZE,                        //8歌曲文件的大小
                         MediaStore.Audio.Media.ALBUM_ID},                   //9专辑ID
-                null, null, null);
+                selection, selectionArgs, null);
 
         if (cursor != null && cursor.moveToFirst()){
             do {

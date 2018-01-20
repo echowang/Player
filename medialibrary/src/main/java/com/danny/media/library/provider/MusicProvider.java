@@ -55,7 +55,7 @@ public abstract class MusicProvider{
                 new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator }, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-
+                        isScanning = false;
                     }
                 });
     }
@@ -165,15 +165,13 @@ public abstract class MusicProvider{
             return null;
         }
 
-        Bitmap bitmap = null;
-        String albumArt = getAlbumArt(context,song);
-        if (!TextUtils.isEmpty(albumArt)){
-            bitmap = BitmapFactory.decodeFile(albumArt);
-        }
-
+        String albumPath = getAlbumArtFromFile(song);
+        Bitmap bitmap = BitmapFactory.decodeFile(albumPath);
         if (bitmap == null){
-            String albumPath = getAlbumArtFromFile(song);
-            bitmap = BitmapFactory.decodeFile(albumPath);
+            String albumArt = getAlbumArt(context,song);
+            if (!TextUtils.isEmpty(albumArt)){
+                bitmap = BitmapFactory.decodeFile(albumArt);
+            }
         }
         return bitmap;
     }
