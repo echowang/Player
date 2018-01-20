@@ -91,7 +91,7 @@ public class SplashActivity extends BaseAcivity {
 
     private void startMusicService(){
         LogUtil.d(TAG,"startMusicMainActivity");
-        if (!serviceIsWorked(MusicPlayerService.class)){
+        if (!serviceIsRunning(MusicPlayerService.class)){
             Intent intent = new Intent(this, MusicPlayerService.class);
             startService(intent);
         }
@@ -118,7 +118,7 @@ public class SplashActivity extends BaseAcivity {
      * @param clazz
      * @return
      */
-    private boolean serviceIsWorked(Class clazz) {
+    private boolean serviceIsRunning(Class clazz) {
         if (clazz == null){
             return false;
         }

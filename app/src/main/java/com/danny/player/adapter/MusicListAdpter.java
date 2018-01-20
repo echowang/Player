@@ -25,7 +25,9 @@ import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.glide.GlideApp;
 import com.danny.player.glide.GlideRoundTransform;
+import com.danny.player.glide.PlayerGlide;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -181,28 +183,10 @@ public class MusicListAdpter extends RecyclerView.Adapter {
 
             Uri albumUri = musicProvider.getAlbumPath(mContext,song);
             if (albumUri == null){
-                Glide.with(mContext).load(R.mipmap.default_artist).into(itemAlbumIcon);
+                PlayerGlide.loadImage(mContext,R.mipmap.default_artist,itemAlbumIcon);
             }else{
                 LogUtil.i(TAG,song.getTitle() + " : " + albumUri.getPath());
-                GlideApp.with(mContext)
-                        .load(albumUri)
-                        .placeholder(R.mipmap.default_artist)
-                        .error(R.mipmap.default_artist)
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                LogUtil.i(TAG,"onLoadFailed");
-                                e.printStackTrace();
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                LogUtil.i(TAG,"onResourceReady");
-                                return false;
-                            }
-                        })
-                        .into(itemAlbumIcon);
+                PlayerGlide.loadLocalRoundImage(mContext,R.mipmap.default_artist,R.mipmap.default_artist,albumUri.getPath(),6,itemAlbumIcon);
             }
             itemNameText.setText(song.getTitle());
             itemDescText.setText(song.getArtist() + "-" + song.getAlbum());

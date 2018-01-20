@@ -2,6 +2,7 @@ package com.danny.player.ui.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -19,6 +20,7 @@ import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
+import com.danny.player.glide.PlayerGlide;
 
 /**
  * Created by tingw on 2018/1/16.
@@ -115,11 +117,11 @@ public class MusicListControllerBar extends LinearLayout implements View.OnClick
             musicSeekBar.setMax(song.getDuration());
 
             MusicProvider musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(getContext());
-            Bitmap albumBitmap = musicProvider.getAlbumImage(getContext(),song);
-            if (albumBitmap == null){
-                musicIcon.setImageResource(R.mipmap.default_artist);
-            }else{
-                musicIcon.setImageBitmap(albumBitmap);
+            Uri albumUri = musicProvider.getAlbumPath(getContext(),song);
+            if (albumUri == null){
+                PlayerGlide.loadImage(getContext(),R.mipmap.default_artist,musicIcon);
+            }else {
+                PlayerGlide.loadLocalRoundImage(getContext(),R.mipmap.default_artist,R.mipmap.default_artist,albumUri.getPath(),6,musicIcon);
             }
         }
     }
