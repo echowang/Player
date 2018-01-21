@@ -16,8 +16,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.danny.media.library.utils.ImageUtils;
 import com.danny.player.R;
+import com.danny.player.glide.PlayerGlide;
 
 /**
  * Created by tingw on 2018/1/18.
@@ -99,12 +99,12 @@ public class MusicAlbumCoverView extends View implements ValueAnimator.AnimatorU
         mTopLineHeight = dp2px(1);
         mCoverBorderWidth = dp2px(1);
         mDiscBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.play_page_disc);
-        mDiscBitmap = ImageUtils.resizeImage(mDiscBitmap, (int) (getScreenWidth() * 0.75),
+        mDiscBitmap = PlayerGlide.resizeImage(mDiscBitmap, (int) (getScreenWidth() * 0.75),
                 (int) (getScreenWidth() * 0.75));
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.play_page_default_cover);
-        mCoverBitmap = ImageUtils.resizeImage(bitmap, getScreenWidth() / 2, getScreenWidth() / 2);
+        mCoverBitmap = PlayerGlide.resizeImage(bitmap, getScreenWidth() / 2, getScreenWidth() / 2);
         mNeedleBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.play_page_needle);
-        mNeedleBitmap = ImageUtils.resizeImage(mNeedleBitmap, (int) (getScreenWidth() * 0.25),
+        mNeedleBitmap = PlayerGlide.resizeImage(mNeedleBitmap, (int) (getScreenWidth() * 0.25),
                 (int) (getScreenWidth() * 0.375));
 
         mPlayAnimator = ValueAnimator.ofFloat(NEEDLE_ROTATION_PAUSE, NEEDLE_ROTATION_PLAY);
@@ -189,8 +189,8 @@ public class MusicAlbumCoverView extends View implements ValueAnimator.AnimatorU
         if (bitmap == null){
             return;
         }
-        bitmap = ImageUtils.resizeImage(bitmap, getScreenWidth() / 2, getScreenWidth() / 2);
-        mCoverBitmap = ImageUtils.createCircleImage(bitmap);
+        bitmap = PlayerGlide.resizeImage(bitmap, getScreenWidth() / 2, getScreenWidth() / 2);
+        mCoverBitmap = PlayerGlide.createCircleImage(bitmap);
         mDiscRotation = 0.0f;
         invalidate();
     }

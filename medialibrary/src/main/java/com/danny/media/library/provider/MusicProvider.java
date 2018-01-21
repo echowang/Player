@@ -128,6 +128,13 @@ public abstract class MusicProvider{
 
     /**
      * 根据歌曲查找歌词文件
+     * 歌词和歌曲的目录结构
+     * player
+     *  music
+     *      ****.mp3
+     *  lyric
+     *      ****.lrc
+     *
      * @param song
      * @return
      */
@@ -220,6 +227,12 @@ public abstract class MusicProvider{
 
     /**
      * 从文件中读取专辑图片地址
+     * 专辑图片和歌曲的目录结构
+     * player
+     *  music
+     *      ****.mp3
+     *  album
+     *      ****.jpg
      * @param song
      * @return
      */
