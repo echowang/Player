@@ -13,6 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.danny.media.library.model.Song;
+import com.danny.media.library.service.PlayerModel;
 import com.danny.media.library.utils.StringUtil;
 import com.danny.player.R;
 
@@ -71,6 +72,7 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
         playBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
+        playModel.setOnClickListener(this);
     }
 
     /**
@@ -99,6 +101,23 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
         playTime.setText(StringUtil.durationToTimeString(progress));
     }
 
+    public void updateModelStatue(PlayerModel playerModel){
+        switch (playerModel){
+            case RANDOM:{
+                playModel.setImageLevel(1);
+                break;
+            }
+            case SINGLE:{
+                playModel.setImageLevel(2);
+                break;
+            }
+            case SEQUENCE:{
+                playModel.setImageLevel(0);
+                break;
+            }
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -121,6 +140,12 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
                 }
                 break;
             }
+            case R.id.iv_mode:{
+                if (playControllerBarListener != null){
+                    playControllerBarListener.onModelClick();
+                }
+                break;
+            }
         }
     }
 
@@ -132,5 +157,6 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
         void onPlayOrPauseClick(boolean isPlay);
         void onNextClick();
         void onPrevClick();
+        void onModelClick();
     }
 }

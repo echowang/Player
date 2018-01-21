@@ -12,6 +12,7 @@ import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.service.PlayerModel;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
@@ -71,6 +72,8 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
 
         Song song = playerService.getPlaySource();
         updateMusicInfo(song);
+
+        musicPlayControllerBar.updateModelStatue(playerService.getPlayerModel());
     }
 
     private void initViewPager(){
@@ -147,6 +150,28 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
     @Override
     public void onPrevClick() {
         playerService.prev();
+    }
+
+    @Override
+    public void onModelClick() {
+        PlayerModel model = playerService.getPlayerModel();
+        PlayerModel changeModel = model;
+        switch (model){
+            case SEQUENCE:{
+                changeModel = PlayerModel.RANDOM;
+                break;
+            }
+            case SINGLE:{
+                changeModel = PlayerModel.SEQUENCE;
+                break;
+            }
+            case RANDOM:{
+                changeModel = PlayerModel.SINGLE;
+                break;
+            }
+        }
+        musicPlayControllerBar.updateModelStatue(changeModel);
+        playerService.setPlayerModel(changeModel);
     }
 
     //IServiceUIRefreshListener

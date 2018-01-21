@@ -5,9 +5,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.danny.player.R;
 import com.danny.player.ui.fragment.BaseFragment;
@@ -25,6 +28,13 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.player_drawerlavout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.lv_left_menu)
+    ListView menuListView;
+
+    private String[] lvs = {"音乐", "视频", "图片查看器"};
+    private ArrayAdapter arrayAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -34,6 +44,11 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
+
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, lvs);
+        menuListView.setAdapter(arrayAdapter);
 
         BaseFragment musicMainFragment = new MusicMainFragment();
         startFragment(musicMainFragment);

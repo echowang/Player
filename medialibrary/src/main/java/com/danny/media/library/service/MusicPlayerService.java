@@ -8,6 +8,7 @@ import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -26,11 +27,36 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     private int playSongPosition;
     private boolean autoPlay = true;
 
+    private PlayerModel playerModel = PlayerModel.SEQUENCE;
+
     @Override
     public void onCreate() {
         super.onCreate();
         LogUtil.i(TAG,"onCreate");
 
+        initMusicPlayer();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        LogUtil.i(TAG,"onStartCommand");
+
+        if (musicProvider != null){
+            musicProvider.loadMusic();
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        LogUtil.i(TAG,"onDestroy");
+
+        AudioFocusManager.getInstance().abanodAudioFocus(this);
+        super.onDestroy();
+    }
+
+    private void initMusicPlayer(){
         musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(this);
         musicProvider.setIMusicScanListener(new MusicProvider.IMusicScanListener() {
             @Override
@@ -88,15 +114,23 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
         musicPlayer = new MusicPlayer(this);
     }
 
+    //    PlayerService
+    /**
+     * 设置当前的播放模式
+     * @param model
+     */
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.i(TAG,"onStartCommand");
+    public void setPlayerModel(PlayerModel model){
+        this.playerModel = model;
+    }
 
-        if (musicProvider != null){
-            musicProvider.loadMusic();
-        }
-
-        return super.onStartCommand(intent, flags, startId);
+    /**
+     * 读取当前的播放模式
+     * @return
+     */
+    @Override
+    public PlayerModel getPlayerModel() {
+        return playerModel;
     }
 
     @Override
@@ -147,13 +181,30 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     @Override
     public void next() {
-        int max  = songList.size() - 1;
-        if (playSongPosition == max){
-            playSongPosition = 0;
-        }else if(playSongPosition >= 0 && playSongPosition < max){
-            playSongPosition++;
-        }else{
-            playSongPosition = 0;
+        switch (playerModel){
+            case RANDOM:{
+                Random random = new Random();
+                int randomInt = random.nextInt(songList.size());
+                while (randomInt == playSongPosition){
+                    randomInt = random.nextInt(songList.size());
+                }
+                playSongPosition = randomInt;
+                break;
+            }
+            case SINGLE:{
+                break;
+            }
+            case SEQUENCE:{
+                int max  = songList.size() - 1;
+                if (playSongPosition == max){
+                    playSongPosition = 0;
+                }else if(playSongPosition >= 0 && playSongPosition < max){
+                    playSongPosition++;
+                }else{
+                    playSongPosition = 0;
+                }
+                break;
+            }
         }
         Song song = songList.get(playSongPosition);
         musicPlayer.play(song);
@@ -161,13 +212,30 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     @Override
     public void prev() {
-        int max  = songList.size() - 1;
-        if (playSongPosition == 0){
-            playSongPosition = max;
-        }else if (playSongPosition > 0 && playSongPosition <= max){
-            playSongPosition--;
-        }else{
-            playSongPosition = 0;
+        switch (playerModel){
+            case SEQUENCE:{
+                int max  = songList.size() - 1;
+                if (playSongPosition == 0){
+                    playSongPosition = max;
+                }else if (playSongPosition > 0 && playSongPosition <= max){
+                    playSongPosition--;
+                }else{
+                    playSongPosition = 0;
+                }
+                break;
+            }
+            case SINGLE:{
+                break;
+            }
+            case RANDOM:{
+                Random random = new Random();
+                int randomInt = random.nextInt(songList.size());
+                while (randomInt == playSongPosition){
+                    randomInt = random.nextInt(songList.size());
+                }
+                playSongPosition = randomInt;
+                break;
+            }
         }
         Song song = songList.get(playSongPosition);
         musicPlayer.play(song);
@@ -188,14 +256,7 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
         return autoPlay;
     }
 
-    @Override
-    public void onDestroy() {
-        LogUtil.i(TAG,"onDestroy");
-
-        AudioFocusManager.getInstance().abanodAudioFocus(this);
-        super.onDestroy();
-    }
-
+//    PlayerScheduleListener
     @Override
     public void onPublish(int progress) {
         if (refreshListener != null){

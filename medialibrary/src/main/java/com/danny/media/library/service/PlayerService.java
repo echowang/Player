@@ -27,6 +27,8 @@ public abstract class PlayerService<T> extends Service {
     public abstract int getPlayProgress();
     public abstract boolean isPlaying();
     public abstract boolean isAutoPlay();
+    public abstract void setPlayerModel(PlayerModel model);
+    public abstract PlayerModel getPlayerModel();
 
     @Nullable
     @Override

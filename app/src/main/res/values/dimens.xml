@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="player_drawerlayout_width">200dp</dimen>
+
     <dimen name="top_bar_height">48dp</dimen>
     <dimen name="controller_list_bar_height">60dp</dimen>
     <dimen name="controller_play_bar_height">100dp</dimen>

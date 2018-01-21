@@ -20,6 +20,7 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
 
     private Handler mHandler;
     private static final long TIME_UPDATE = 500L;
+
     private Runnable mPublishRunnable = new Runnable(){
         @Override
         public void run() {
