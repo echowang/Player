@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.danny.media.library.model.Song;
 import com.danny.media.library.service.PlayerModel;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.media.library.utils.StringUtil;
 import com.danny.player.R;
 
@@ -23,7 +24,9 @@ import butterknife.ButterKnife;
 /**
  * Created by tingw on 2018/1/18.
  */
-public class MusicPlayControllerBar extends LinearLayout implements View.OnClickListener {
+public class MusicPlayControllerBar extends LinearLayout implements View.OnClickListener,SeekBar.OnSeekBarChangeListener {
+    private final static String TAG = MusicPlayControllerBar.class.getSimpleName();
+
     @BindView(R.id.tv_current_time)
     TextView playTime;
     @BindView(R.id.tv_total_time)
@@ -38,6 +41,8 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
     ImageView playBtn;
     @BindView(R.id.iv_next)
     ImageView nextBtn;
+
+    private boolean isDrag = false;
 
     private MusicPlayControllerBarListener playControllerBarListener;
 
@@ -73,6 +78,7 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
         prevBtn.setOnClickListener(this);
         nextBtn.setOnClickListener(this);
         playModel.setOnClickListener(this);
+        seekBar.setOnSeekBarChangeListener(this);
     }
 
     /**
@@ -97,6 +103,9 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
     }
 
     public void updatePlayProgress(int progress){
+        if (isDrag){
+            return;
+        }
         seekBar.setProgress(progress);
         playTime.setText(StringUtil.durationToTimeString(progress));
     }
@@ -153,10 +162,31 @@ public class MusicPlayControllerBar extends LinearLayout implements View.OnClick
         this.playControllerBarListener = playControllerBarListener;
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        LogUtil.i(TAG,"onProgressChanged : " + i);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        isDrag = true;
+        LogUtil.i(TAG,"onStartTrackingTouch : " + seekBar.getProgress());
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        isDrag = false;
+        LogUtil.i(TAG,"onStopTrackingTouch : " + seekBar.getProgress());
+        if (playControllerBarListener != null){
+            playControllerBarListener.onSeekBarChange(seekBar.getProgress());
+        }
+    }
+
     public interface MusicPlayControllerBarListener{
         void onPlayOrPauseClick(boolean isPlay);
         void onNextClick();
         void onPrevClick();
         void onModelClick();
+        void onSeekBarChange(int progress);
     }
 }

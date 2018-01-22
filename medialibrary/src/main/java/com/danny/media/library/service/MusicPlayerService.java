@@ -242,6 +242,13 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     }
 
     @Override
+    public void seekTo(int progress) {
+        if (progress >= 0){
+            musicPlayer.seekTo(progress);
+        }
+    }
+
+    @Override
     public int getPlayProgress() {
         return musicPlayer.getPlayProgress();
     }

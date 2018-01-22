@@ -1,7 +1,6 @@
 package com.danny.media.library.provider;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

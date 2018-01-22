@@ -174,6 +174,11 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
         playerService.setPlayerModel(changeModel);
     }
 
+    @Override
+    public void onSeekBarChange(int progress) {
+        playerService.seekTo(progress);
+    }
+
     //IServiceUIRefreshListener
     @Override
     public void onRefreshMusicList(List<Song> songList) {

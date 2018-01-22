@@ -2,9 +2,7 @@ package com.danny.player.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,22 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
-import com.danny.player.glide.GlideApp;
-import com.danny.player.glide.GlideRoundTransform;
 import com.danny.player.glide.PlayerGlide;
 
-import java.io.File;
 import java.util.List;
 
 /**

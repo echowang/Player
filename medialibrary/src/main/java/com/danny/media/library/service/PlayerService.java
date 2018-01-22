@@ -24,6 +24,7 @@ public abstract class PlayerService<T> extends Service {
     public abstract void stop();
     public abstract void next();
     public abstract void prev();
+    public abstract void seekTo(int progress);
     public abstract int getPlayProgress();
     public abstract boolean isPlaying();
     public abstract boolean isAutoPlay();
