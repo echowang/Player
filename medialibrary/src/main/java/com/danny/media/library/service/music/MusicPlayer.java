@@ -1,9 +1,12 @@
-package com.danny.media.library.service;
+package com.danny.media.library.service.music;
 
 import android.media.MediaPlayer;
 import android.os.Handler;
 
 import com.danny.media.library.model.Song;
+import com.danny.media.library.service.Player;
+import com.danny.media.library.service.PlayerScheduleListener;
+import com.danny.media.library.service.PlayerStaue;
 
 import java.io.IOException;
 

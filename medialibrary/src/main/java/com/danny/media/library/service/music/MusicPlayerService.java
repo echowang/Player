@@ -1,10 +1,14 @@
-package com.danny.media.library.service;
+package com.danny.media.library.service.music;
 
 import android.content.Intent;
 
 import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.service.AudioFocusManager;
+import com.danny.media.library.service.PlayerModel;
+import com.danny.media.library.service.PlayerScheduleListener;
+import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 
 import java.util.List;

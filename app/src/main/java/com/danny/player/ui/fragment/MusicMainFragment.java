@@ -9,7 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.danny.media.library.model.Song;
-import com.danny.media.library.service.MusicPlayerService;
+import com.danny.media.library.service.music.MusicPlayerService;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;

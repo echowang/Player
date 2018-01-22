@@ -28,7 +28,7 @@
 
         </activity>
 
-        <service android:name="com.danny.media.library.service.MusicPlayerService" />
+        <service android:name="com.danny.media.library.service.music.MusicPlayerService" />
 
     </application>
 

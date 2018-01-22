@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.widget.TextView;
 
-import com.danny.media.library.service.MusicPlayerService;
+import com.danny.media.library.service.music.MusicPlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 
