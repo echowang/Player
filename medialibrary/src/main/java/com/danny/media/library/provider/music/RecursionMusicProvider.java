@@ -1,4 +1,4 @@
-package com.danny.media.library.provider;
+package com.danny.media.library.provider.music;
 
 import android.content.Context;
 

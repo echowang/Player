@@ -3,7 +3,7 @@ package com.danny.media.library.service;
 import android.content.Intent;
 
 import com.danny.media.library.provider.MediaProviderFactory;
-import com.danny.media.library.provider.MusicProvider;
+import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 

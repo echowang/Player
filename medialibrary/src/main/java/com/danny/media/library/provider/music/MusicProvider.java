@@ -1,4 +1,4 @@
-package com.danny.media.library.provider;
+package com.danny.media.library.provider.music;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +11,10 @@ import android.text.TextUtils;
 
 import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.provider.filter.Filter;
+import com.danny.media.library.provider.filter.Filterable;
+import com.danny.media.library.provider.filter.MusicGarbledFilter;
+import com.danny.media.library.provider.filter.MusicSizeFilter;
 import com.danny.media.library.utils.ChineseToPinyin;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.media.library.utils.StringUtil;
@@ -27,7 +31,7 @@ import java.util.Map;
  * Created by dannywang on 2017/12/29.
  */
 
-public abstract class MusicProvider{
+public abstract class MusicProvider implements Filterable{
     private final static String TAG = MusicProvider.class.getSimpleName();
 
     private final static String ALBUM_DIR = "album";
@@ -42,9 +46,16 @@ public abstract class MusicProvider{
 
     protected boolean isScanning = false;
 
+    protected List<Filter> filterList;
+
     public MusicProvider(Context context){
         this.context = context;
 
+        filterList = new ArrayList<>();
+        MusicGarbledFilter garbledFilter = new MusicGarbledFilter();
+        MusicSizeFilter sizeFilter = new MusicSizeFilter();
+        setFilter(garbledFilter);
+        setFilter(sizeFilter);
         scanMediaResources();
     }
 
@@ -64,6 +75,18 @@ public abstract class MusicProvider{
     }
 
     protected abstract void queryMediaResources();
+
+    @Override
+    public void setFilter(Filter filter) {
+        if (filter != null){
+            filterList.add(filter);
+        }
+    }
+
+    @Override
+    public List<Filter> getFilters() {
+        return filterList;
+    }
 
     private void clear(){
         songList.clear();

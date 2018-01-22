@@ -1,7 +1,6 @@
 package com.danny.player.ui.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
@@ -16,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.danny.media.library.provider.MediaProviderFactory;
-import com.danny.media.library.provider.MusicProvider;
+import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;

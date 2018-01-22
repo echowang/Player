@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 
 import com.danny.media.library.broadcast.AudioVolumeBroadcast;
 import com.danny.media.library.provider.MediaProviderFactory;
-import com.danny.media.library.provider.MusicProvider;
+import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.service.PlayerModel;

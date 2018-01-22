@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.danny.media.library.provider.MediaProviderFactory;
-import com.danny.media.library.provider.MusicProvider;
+import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;

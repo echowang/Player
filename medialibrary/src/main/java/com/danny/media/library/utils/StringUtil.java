@@ -65,7 +65,7 @@ public class StringUtil {
         int s = (int) ((duration / DateUtils.SECOND_IN_MILLIS) % 60);
         String mm = String.format(Locale.getDefault(), "%02d", m);
         String ss = String.format(Locale.getDefault(), "%02d", s);
-        String time = mm + ":" + ss;
+        String time = String.format("%s:%s",mm,ss);
         return time;
     }
 }

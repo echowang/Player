@@ -1,11 +1,12 @@
-package com.danny.media.library.provider;
+package com.danny.media.library.provider.music;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
 import com.danny.media.library.model.Song;
-import com.danny.media.library.utils.StringUtil;
+import com.danny.media.library.provider.filter.Filter;
+import com.danny.media.library.utils.LogUtil;
 
 /**
  * Created by tingw on 2018/1/2.
@@ -13,6 +14,8 @@ import com.danny.media.library.utils.StringUtil;
  */
 
 public class MediaMusicProvider extends MusicProvider {
+    private final static String TAG = MediaMusicProvider.class.getSimpleName();
+
     public static final String DEFAULT_TITLE = "未知歌曲";
     public static final String DEFAULT_ALBUM = "未知专辑";
     public static final String DEFAULT_SINGER = "未知歌手";
@@ -63,20 +66,16 @@ public class MediaMusicProvider extends MusicProvider {
                 song.setFileSize(cursor.getLong(8));
                 song.setAlbumId(cursor.getLong(9));
 
-                song.setAlbum(song.getAlbum().replace("\u007F",""));
-                song.setArtist(song.getArtist().replace("<unknown>",DEFAULT_SINGER));
-
-                if (StringUtil.isGarbledCode(song.getTitle()) || StringUtil.isGarbledCode(song.getArtist()) || StringUtil.isGarbledCode(song.getAlbum())) {
-                    if (song.getFileName() != null && song.getFileName().contains("-")) {
-                        String[] split = song.getFileName().split("-");
-                        String[] split1 = split[1].split("\\.");
-                        song.setTitle(split1[0]);
-                        song.setArtist(split[0]);
-                        song.setAlbum(DEFAULT_ALBUM);
+                boolean filterResult = true;
+                for(Filter filter : filterList){
+                    filterResult = filter.performFiltering(song);
+                    LogUtil.i(TAG,filter.getFilterName() + " : " + filterResult);
+                    if (!filterResult){
+                        break;
                     }
                 }
 
-                if (song.getDuration() > 0){
+                if (filterResult){
                     songList.add(song);
                 }
             }while (cursor.moveToNext());
@@ -86,4 +85,5 @@ public class MediaMusicProvider extends MusicProvider {
             }
         }
     }
+
 }

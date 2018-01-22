@@ -2,6 +2,10 @@ package com.danny.media.library.provider;
 
 import android.content.Context;
 
+import com.danny.media.library.provider.music.MediaMusicProvider;
+import com.danny.media.library.provider.music.MusicProvider;
+import com.danny.media.library.provider.video.VideoProvider;
+
 /**
  * Created by tingw on 2018/1/2.
  */
