@@ -20,5 +20,6 @@
         android:id="@+id/music_play_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/controller_bar_marging_bottom"
         android:layout_above="@id/music_play_controller_bar"/>
 </RelativeLayout>

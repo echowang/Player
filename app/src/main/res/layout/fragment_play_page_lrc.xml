@@ -5,19 +5,42 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<include layout="@layout/include_play_page_volume_bar" />-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/controller_bar_margin_left"
+        android:layout_marginRight="@dimen/controller_bar_margin_right"
+        android:layout_marginTop="@dimen/controller_bar_margin_top"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@mipmap/ic_volume" />
 
-    <!--<me.wcy.lrcview.LrcView-->
-        <!--android:id="@+id/lrc_view_full"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--lrc:lrcAnimationDuration="1000"-->
-        <!--lrc:lrcCurrentTextColor="@color/white"-->
-        <!--lrc:lrcDividerHeight="24dp"-->
-        <!--lrc:lrcNormalTextColor="@color/white_50p"-->
-        <!--lrc:lrcPadding="40dp"-->
-        <!--lrc:lrcTextSize="@dimen/text_size_common"-->
-        <!--lrc:lrcTimelineColor="@color/white_50p"-->
-        <!--lrc:lrcTimelineTextColor="#CCFFFFFF" />-->
+        <SeekBar
+            android:id="@+id/sb_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:progressDrawable="@drawable/seek_bar_volume_style"
+            android:thumb="@mipmap/ic_seek_bar_volume_btn" />
+    </LinearLayout>
+
+    <me.wcy.lrcview.LrcView
+        android:id="@+id/lrc_view_full"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        lrc:lrcAnimationDuration="500"
+        lrc:lrcCurrentTextColor="@color/lrc_text_current"
+        lrc:lrcDividerHeight="24dp"
+        lrc:lrcNormalTextColor="@color/lrc_text_normal"
+        lrc:lrcPadding="40dp"
+        lrc:lrcTextSize="@dimen/music_lrc_text_size_common"
+        lrc:lrcTimelineColor="@color/white_50p"
+        lrc:lrcTimelineTextColor="#CCFFFFFF" />
 </LinearLayout>
