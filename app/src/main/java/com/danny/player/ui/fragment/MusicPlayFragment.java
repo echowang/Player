@@ -19,6 +19,7 @@ import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.service.IServiceUIRefreshListener;
 import com.danny.media.library.service.PlayerModel;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
@@ -40,7 +41,7 @@ import me.wcy.lrcview.LrcView;
 /**
  * Created by tingw on 2018/1/17.
  */
-public class MusicPlayFragment extends BaseFragment implements PlayerService.IServiceUIRefreshListener<Song>, MusicPlayControllerBar.MusicPlayControllerBarListener,AudioVolumeBroadcast.OnAudioVolumeChangeListener {
+public class MusicPlayFragment extends BaseFragment implements IServiceUIRefreshListener<Song>, MusicPlayControllerBar.MusicPlayControllerBarListener,AudioVolumeBroadcast.OnAudioVolumeChangeListener {
     private final static String TAG = MusicPlayFragment.class.getSimpleName();
 
     @BindView(R.id.music_play_container_bg)
@@ -77,7 +78,7 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
         initVolumeBar();
 
         playerService = PlayerApplication.getApplication().getMusicPlayerService();
-        playerService.setUIRefreshListener(this);
+        playerService.registerUIRefreshListener(this);
     }
 
     @Override
@@ -245,7 +246,7 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
 
     //IServiceUIRefreshListener
     @Override
-    public void onRefreshMusicList(List<Song> songList) {
+    public void onRefreshSourceList(List<Song> songList) {
 
     }
 
@@ -266,7 +267,7 @@ public class MusicPlayFragment extends BaseFragment implements PlayerService.ISe
     }
 
     @Override
-    public void onMusicChange(Song song) {
+    public void onSourceChange(Song song) {
         updateMusicInfo(song);
     }
 

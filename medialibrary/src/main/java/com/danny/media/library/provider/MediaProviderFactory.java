@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.danny.media.library.provider.music.MediaMusicProvider;
 import com.danny.media.library.provider.music.MusicProvider;
+import com.danny.media.library.provider.video.MediaVideoProvider;
 import com.danny.media.library.provider.video.VideoProvider;
 
 /**
@@ -14,6 +15,7 @@ public class MediaProviderFactory {
     private static final MediaProviderFactory ourInstance = new MediaProviderFactory();
 
     private MusicProvider musicProvider;
+    private VideoProvider videoProvider;
 
     public static MediaProviderFactory getInstance() {
         return ourInstance;
@@ -24,19 +26,17 @@ public class MediaProviderFactory {
 
     public synchronized MusicProvider getMusciProvideo(Context context){
         synchronized (ourInstance){
-            if (musicProvider == null){
-                musicProvider = new MediaMusicProvider(context);
+            if (musicProvider == null && context != null){
+                musicProvider = new MediaMusicProvider(context.getApplicationContext());
             }
         }
         return musicProvider;
     }
 
-    public VideoProvider getVideoProvider(){
-        return  new VideoProvider() {
-            @Override
-            public void scanMediaResources() {
-
-            }
-        };
+    public VideoProvider getVideoProvider(Context context){
+        if (videoProvider == null && context != null){
+            videoProvider = new MediaVideoProvider(context.getApplicationContext());
+        }
+        return  videoProvider;
     }
 }

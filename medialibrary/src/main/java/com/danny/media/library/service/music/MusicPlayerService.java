@@ -1,8 +1,12 @@
 package com.danny.media.library.service.music;
 
 import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Environment;
 
 import com.danny.media.library.provider.MediaProviderFactory;
+import com.danny.media.library.provider.MediaProviderListener;
 import com.danny.media.library.provider.music.MusicProvider;
 import com.danny.media.library.model.Song;
 import com.danny.media.library.service.AudioFocusManager;
@@ -11,11 +15,15 @@ import com.danny.media.library.service.PlayerScheduleListener;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 
+import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by dannywang on 2017/12/29.
@@ -25,7 +33,6 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     private final static String TAG = MusicPlayerService.class.getSimpleName();
 
     private MusicProvider musicProvider;
-    private IServiceUIRefreshListener refreshListener;
     private MusicPlayer musicPlayer;
     private List<Song> songList;
     private int playSongPosition;
@@ -45,9 +52,22 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtil.i(TAG,"onStartCommand");
 
-        if (musicProvider != null){
-            musicProvider.loadMusic();
-        }
+        MediaScannerConnection.scanFile(this,
+                new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator }, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Observable.just(1)
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Consumer<Integer>() {
+                                    @Override
+                                    public void accept(Integer integer) throws Exception {
+                                        if (musicProvider != null){
+                                            musicProvider.loadMediaResources();
+                                        }
+                                    }
+                                });
+                    }
+                });
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -62,7 +82,7 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     private void initMusicPlayer(){
         musicProvider = MediaProviderFactory.getInstance().getMusciProvideo(this);
-        musicProvider.setIMusicScanListener(new MusicProvider.IMusicScanListener() {
+        musicProvider.setMediaProviderListener(new MediaProviderListener() {
             @Override
             public void onStartScan() {
                 LogUtil.i(TAG,"onStartScan");
@@ -72,8 +92,8 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
             public void onScanFinish() {
                 LogUtil.i(TAG,"onScanFinish");
                 songList = musicProvider.getMusicList();
-                if (refreshListener != null){
-                    refreshListener.onRefreshMusicList(songList);
+                if (uiRefreshListener != null){
+                    uiRefreshListener.onRefreshSourceList(songList);
                 }
             }
         });
@@ -138,18 +158,13 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     }
 
     @Override
-    public void setUIRefreshListener(IServiceUIRefreshListener uiRefreshListener) {
-        this.refreshListener = uiRefreshListener;
-    }
-
-    @Override
     public List<Song> getPlaySourceList() {
         return songList;
     }
 
     @Override
     public Song getPlaySource() {
-        return musicPlayer.getPlaySong();
+        return musicPlayer.getPlaySource();
     }
 
     @Override
@@ -270,17 +285,17 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 //    PlayerScheduleListener
     @Override
     public void onPublish(int progress) {
-        if (refreshListener != null){
-            Song song = musicPlayer.getPlaySong();
-            refreshListener.onPublish(song,progress);
+        if (uiRefreshListener != null){
+            Song song = musicPlayer.getPlaySource();
+            uiRefreshListener.onPublish(song,progress);
         }
     }
 
     @Override
     public void onBufferingUpdate(int percent) {
-        if (refreshListener != null){
-            Song song = musicPlayer.getPlaySong();
-            refreshListener.onBufferingUpdate(song,percent);
+        if (uiRefreshListener != null){
+            Song song = musicPlayer.getPlaySource();
+            uiRefreshListener.onBufferingUpdate(song,percent);
         }
     }
 
@@ -291,8 +306,8 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
 
     @Override
     public void OnChangeSource(Song song) {
-        if (refreshListener != null){
-            refreshListener.onMusicChange(song);
+        if (uiRefreshListener != null){
+            uiRefreshListener.onSourceChange(song);
         }
     }
 }

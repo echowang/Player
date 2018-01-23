@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.danny.media.library.model.Song;
+import com.danny.media.library.service.IServiceUIRefreshListener;
 import com.danny.media.library.service.music.MusicPlayerService;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
@@ -26,16 +27,16 @@ import butterknife.BindView;
  * Created by tingw on 2018/1/15.
  */
 
-public class MusicMainFragment extends BaseFragment implements PlayerService.IServiceUIRefreshListener<Song>,MusicListAdpter.OnMusicItemClick, MusicListControllerBar.MusicControllerBarListener {
+public class MusicMainFragment extends BaseFragment implements IServiceUIRefreshListener<Song>,MusicListAdpter.OnMusicItemClick, MusicListControllerBar.MusicControllerBarListener {
     private final static String TAG = MusicMainFragment.class.getSimpleName();
-    @BindView(R.id.main_recyclerview)
+    @BindView(R.id.music_main_recyclerview)
     RecyclerView mRecyclerView;
     @BindView(R.id.music_controller_bar)
     MusicListControllerBar musicListControllerBar;
 
     private MusicListAdpter musicListAdpter;
 
-    private PlayerServiceConnection playerServiceConnection;
+    private MusicServiceConnection musicServiceConnection;
 
     private PlayerService<Song> playerService;
 
@@ -64,7 +65,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
         if (playerService == null){
             bindPlayerService();
         }else{
-            playerService.setUIRefreshListener(MusicMainFragment.this);
+            playerService.registerUIRefreshListener(MusicMainFragment.this);
             List<Song> songList = playerService.getPlaySourceList();
             setMusicListData(songList);
         }
@@ -88,11 +89,11 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
 
     private void setMusicListData(List<Song> songList){
         LogUtil.i(TAG,"setMusicListData");
-        if (songList == null && !songList.isEmpty()){
+        if (songList == null || songList.isEmpty()){
             return;
         }
 
-        if (!songList.isEmpty() && playerService != null){
+        if (playerService != null){
             Song song = playerService.getPlaySource();
             if (song == null){
                 song = songList.get(0);
@@ -117,20 +118,20 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
     }
 
     private void bindPlayerService(){
-        playerServiceConnection = new MusicMainFragment.PlayerServiceConnection();
+        musicServiceConnection = new MusicServiceConnection();
         Intent intent = new Intent(getContext(), MusicPlayerService.class);
-        getContext().bindService(intent,playerServiceConnection, Context.BIND_AUTO_CREATE);
+        getContext().bindService(intent, musicServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void unBindPlayerService(){
-        if (playerServiceConnection != null){
-            getContext().unbindService(playerServiceConnection);
-            playerServiceConnection = null;
+        if (musicServiceConnection != null){
+            getContext().unbindService(musicServiceConnection);
+            musicServiceConnection = null;
         }
     }
 
     @Override
-    public void onRefreshMusicList(List<Song> songList) {
+    public void onRefreshSourceList(final List<Song> songList) {
         setMusicListData(songList);
     }
 
@@ -148,7 +149,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
     }
 
     @Override
-    public void onMusicChange(Song song) {
+    public void onSourceChange(Song song) {
         if (song == null || playerService == null){
             return;
         }
@@ -214,7 +215,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
         }
     }
 
-    private class PlayerServiceConnection implements ServiceConnection {
+    private class MusicServiceConnection implements ServiceConnection {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -223,7 +224,7 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
                 PlayerService.PlayerBinder playerBinder = (PlayerService.PlayerBinder) iBinder;
                 playerService = playerBinder.getPlayerService();
                 PlayerApplication.getApplication().setMusicPlayerService(playerService);
-                playerService.setUIRefreshListener(MusicMainFragment.this);
+                playerService.registerUIRefreshListener(MusicMainFragment.this);
                 List<Song> songList = playerService.getPlaySourceList();
                 setMusicListData(songList);
             }
@@ -231,12 +232,15 @@ public class MusicMainFragment extends BaseFragment implements PlayerService.ISe
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+            LogUtil.i(TAG,"onServiceDisconnected");
+            if (playerService != null){
+                playerService.unRegisterUIRefreshListener(MusicMainFragment.this);
+            }
         }
 
         @Override
         public void onBindingDied(ComponentName name) {
-
+            LogUtil.i(TAG,"onBindingDied");
         }
     }
 }

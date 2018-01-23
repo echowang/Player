@@ -5,6 +5,6 @@ package com.danny.media.library.provider;
  */
 
 public interface MediaProviderListener {
-   void scanMediaResources();
-   void sortList();
+   void onStartScan();
+   void onScanFinish();
 }

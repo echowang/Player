@@ -4,13 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.danny.media.library.model.Lrc;
 import com.danny.media.library.model.Song;
+import com.danny.media.library.provider.MediaProvider;
 import com.danny.media.library.provider.filter.Filter;
 import com.danny.media.library.provider.filter.Filterable;
 import com.danny.media.library.provider.filter.MusicGarbledFilter;
@@ -31,7 +30,7 @@ import java.util.Map;
  * Created by dannywang on 2017/12/29.
  */
 
-public abstract class MusicProvider implements Filterable{
+public abstract class MusicProvider extends MediaProvider implements Filterable{
     private final static String TAG = MusicProvider.class.getSimpleName();
 
     private final static String ALBUM_DIR = "album";
@@ -42,9 +41,6 @@ public abstract class MusicProvider implements Filterable{
     protected Map<String,List<Song>> singerList = new HashMap<>();
     protected Map<String,List<Song>> albumList = new HashMap<>();
     protected Map<String,List<Song>> folderList = new HashMap<>();
-    protected IMusicScanListener IMusicScanListener;
-
-    protected boolean isScanning = false;
 
     protected List<Filter> filterList;
 
@@ -56,25 +52,7 @@ public abstract class MusicProvider implements Filterable{
         MusicSizeFilter sizeFilter = new MusicSizeFilter();
         setFilter(garbledFilter);
         setFilter(sizeFilter);
-        scanMediaResources();
     }
-
-    private void scanMediaResources(){
-        isScanning = true;
-        MediaScannerConnection.scanFile(context,
-                new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator }, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        isScanning = false;
-                    }
-                });
-    }
-
-    protected boolean isScanning(){
-        return isScanning;
-    }
-
-    protected abstract void queryMediaResources();
 
     @Override
     public void setFilter(Filter filter) {
@@ -98,22 +76,18 @@ public abstract class MusicProvider implements Filterable{
     /**
      * 对外接口，启动查找本地音乐
      */
-    public void loadMusic(){
+    public void loadMediaResources(){
         LogUtil.i(TAG,"loadMusic");
-        if (IMusicScanListener != null){
-            IMusicScanListener.onStartScan();
+        if (mediaProviderListener != null){
+            mediaProviderListener.onStartScan();
         }
         clear();
         queryMediaResources();
         sortList();
         categoryMusicList();
-        if (IMusicScanListener != null){
-            IMusicScanListener.onScanFinish();
+        if (mediaProviderListener != null){
+            mediaProviderListener.onScanFinish();
         }
-    }
-
-    public void setIMusicScanListener(IMusicScanListener IMusicScanListener){
-        this.IMusicScanListener = IMusicScanListener;
     }
 
     /**
@@ -343,8 +317,8 @@ public abstract class MusicProvider implements Filterable{
         }
     }
 
-    public interface IMusicScanListener {
-        void onStartScan();
-        void onScanFinish();
-    }
+//    public interface IMusicScanListener {
+//        void onStartScan();
+//        void onScanFinish();
+//    }
 }

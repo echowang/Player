@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.danny.player.ui.widget.MusicListControllerBar
-        android:id="@+id/music_controller_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/controller_list_bar_height"
-        android:layout_alignParentBottom="true"/>
-
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/music_main_recyclerview"
+        android:id="@+id/video_main_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/music_controller_bar"
         android:background="@color/recycler_background"
         android:padding="10dp"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

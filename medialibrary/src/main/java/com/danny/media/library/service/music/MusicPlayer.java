@@ -14,7 +14,7 @@ import java.io.IOException;
  * Created by tingw on 2018/1/4.
  */
 
-public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,MediaPlayer.OnBufferingUpdateListener,MediaPlayer.OnPreparedListener{
+public class MusicPlayer implements Player<Song>, MediaPlayer.OnCompletionListener,MediaPlayer.OnBufferingUpdateListener,MediaPlayer.OnPreparedListener{
     private MediaPlayer mPlayer;
     private PlayerStaue playerStaue = PlayerStaue.STATE_IDLE;    //播放器的状态
     private Song playSong;   //当前正在播放的歌曲
@@ -38,6 +38,8 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     public MusicPlayer(PlayerScheduleListener scheduleListener){
         mPlayer = new MediaPlayer();
         mPlayer.setOnCompletionListener(this);
+        mPlayer.setOnBufferingUpdateListener(this);
+        mPlayer.setOnPreparedListener(this);
         this.scheduleListener = scheduleListener;
         this.mHandler = new Handler();
     }
@@ -50,8 +52,6 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
             mPlayer.setDataSource(song.getPath());
             mPlayer.prepareAsync();
             playerStaue = PlayerStaue.STATE_PREPARING;
-            mPlayer.setOnBufferingUpdateListener(this);
-            mPlayer.setOnPreparedListener(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,6 +111,11 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
     }
 
     @Override
+    public Song getPlaySource() {
+        return playSong;
+    }
+
+    @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         if (scheduleListener != null){
             scheduleListener.OnCompletion();
@@ -138,9 +143,5 @@ public class MusicPlayer implements Player, MediaPlayer.OnCompletionListener,Med
         if (scheduleListener != null){
             scheduleListener.OnChangeSource(playSong);
         }
-    }
-
-    public Song getPlaySong(){
-        return playSong;
     }
 }

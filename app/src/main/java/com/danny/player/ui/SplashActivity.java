@@ -96,7 +96,7 @@ public class SplashActivity extends BaseAcivity {
             startService(intent);
         }
 
-        Observable.timer(1,TimeUnit.SECONDS)
+        Observable.timer(3,TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override

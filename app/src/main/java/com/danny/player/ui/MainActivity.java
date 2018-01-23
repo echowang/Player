@@ -9,12 +9,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.ui.fragment.BaseFragment;
 import com.danny.player.ui.fragment.MusicMainFragment;
+import com.danny.player.ui.fragment.VideoMainFragment;
 
 import butterknife.BindView;
 
@@ -33,7 +37,7 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
     @BindView(R.id.lv_left_menu)
     ListView menuListView;
 
-    private String[] lvs = {"音乐", "视频", "图片查看器"};
+    private String[] lvs;
     private ArrayAdapter arrayAdapter;
 
     @Override
@@ -47,8 +51,30 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
 
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
 
+        lvs = new String[]{getString(R.string.player_music), getString(R.string.player_video), getString(R.string.player_picture)};
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, lvs);
         menuListView.setAdapter(arrayAdapter);
+        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i){
+                    case 0:{
+                        clearFragment();
+                        BaseFragment musicMainFragment = new MusicMainFragment();
+                        startFragment(musicMainFragment);
+                        drawerLayout.closeDrawers();
+                        break;
+                    }
+                    case 1:{
+                        clearFragment();
+                        BaseFragment videoMainFragment = new VideoMainFragment();
+                        startFragment(videoMainFragment);
+                        drawerLayout.closeDrawers();
+                        break;
+                    }
+                }
+            }
+        });
 
         BaseFragment musicMainFragment = new MusicMainFragment();
         startFragment(musicMainFragment);
@@ -91,6 +117,13 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
             fragmentTransaction.replace(R.id.fragment_container,fragment,fragment.getClass().getSimpleName());
             fragmentTransaction.addToBackStack("player");
             fragmentTransaction.commitAllowingStateLoss();
+        }
+    }
+
+    private void clearFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++){
+            fragmentManager.popBackStack();
         }
     }
 }

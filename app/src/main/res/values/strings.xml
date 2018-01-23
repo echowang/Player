@@ -3,6 +3,7 @@
     <string name="copyright">Copyright © 2015&#045;%d DANNYWANG</string>
     <string name="player_music">音乐</string>
     <string name="player_video">视频</string>
+    <string name="player_picture">图片浏览器</string>
     <string name="title_activity_splash">Splash</string>
     <string name="music_name_default">歌曲名称</string>
     <string name="music_artist_default">未知歌手</string>

@@ -1,13 +1,11 @@
 package com.danny.media.library.service;
 
-import com.danny.media.library.model.Song;
-
 /**
  * Created by tingw on 2018/1/4.
  */
 
-public interface Player {
-    void play(Song song);
+public interface Player<T> {
+    void play(T t);
     void pause();
     void resume();
     void stop();
@@ -17,6 +15,7 @@ public interface Player {
     boolean isPausing();
     boolean isPreparing();
     boolean isIdle();
+    T getPlaySource();
 }
 
 

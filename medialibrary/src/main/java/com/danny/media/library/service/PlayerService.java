@@ -14,8 +14,16 @@ import java.util.List;
 
 public abstract class PlayerService<T> extends Service {
     private PlayerBinder playerBinder;
+    protected IServiceUIRefreshListener<T> uiRefreshListener;
 
-    public abstract void setUIRefreshListener(IServiceUIRefreshListener uiRefreshListener);
+    public void registerUIRefreshListener(IServiceUIRefreshListener<T> uiRefreshListener){
+        this.uiRefreshListener = uiRefreshListener;
+    }
+
+    public void unRegisterUIRefreshListener(IServiceUIRefreshListener<T> uiRefreshListener){
+        this.uiRefreshListener = null;
+    }
+
     public abstract List<T> getPlaySourceList();
     public abstract T getPlaySource();
     public abstract void play(T t);
@@ -50,12 +58,5 @@ public abstract class PlayerService<T> extends Service {
         public PlayerService getPlayerService(){
             return PlayerService.this;
         }
-    }
-
-    public interface IServiceUIRefreshListener<T>{
-        void onRefreshMusicList(List<T> songList);
-        void onPublish(T t,int progress);
-        void onBufferingUpdate(T t,int percent);
-        void onMusicChange(T t);
     }
 }
