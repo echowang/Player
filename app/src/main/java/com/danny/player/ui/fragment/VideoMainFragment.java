@@ -12,7 +12,10 @@ import com.danny.media.library.model.Video;
 import com.danny.media.library.service.IServiceUIRefreshListener;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.service.video.VideoPlayerService;
+import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
+import com.danny.player.adapter.OnItemClickListener;
+import com.danny.player.adapter.VideoListAdapter;
 import com.danny.player.ui.widget.RecycleViewDivider;
 
 import java.util.List;
@@ -23,12 +26,16 @@ import butterknife.BindView;
  * Created by tingw on 2018/1/23.
  */
 
-public class VideoMainFragment extends BaseFragment implements IServiceUIRefreshListener<Video> {
+public class VideoMainFragment extends BaseFragment implements IServiceUIRefreshListener<Video>,OnItemClickListener<Video> {
+    private final static String TAG = VideoMainFragment.class.getSimpleName();
+
     @BindView(R.id.video_main_recyclerview)
     RecyclerView mRecyclerView;
 
     private VideoServiceConnection serviceConnection;
     private PlayerService<Video> playerService;
+
+    private VideoListAdapter videoListAdapter;
 
     @Override
     protected int getLayout() {
@@ -44,6 +51,9 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL));
         mRecyclerView.setLayoutManager(linearLayoutManager);
+        videoListAdapter = new VideoListAdapter(getContext());
+        videoListAdapter.setOnItemClickListener(this);
+        mRecyclerView.setAdapter(videoListAdapter);
 
         bindVideoService();
     }
@@ -68,12 +78,15 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
     }
 
     private void updateVideoSource(List<Video> videoList){
-
+        if (videoList != null && videoListAdapter != null){
+            videoListAdapter.updateVideoList(videoList);
+        }
     }
 
     @Override
     public void onRefreshSourceList(List songList) {
-
+        LogUtil.i(TAG,"onRefreshSourceList");
+        updateVideoSource(songList);
     }
 
     @Override
@@ -89,6 +102,14 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
     @Override
     public void onSourceChange(Video video) {
 
+    }
+
+    @Override
+    public void onItenClick(int position, Video video) {
+        LogUtil.i(TAG,"onItenClick");
+        if (video != null){
+            LogUtil.i(TAG,"title : " + video.getTitle());
+        }
     }
 
     public class VideoServiceConnection implements ServiceConnection {

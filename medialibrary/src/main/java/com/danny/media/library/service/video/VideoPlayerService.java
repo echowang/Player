@@ -1,5 +1,9 @@
 package com.danny.media.library.service.video;
 
+import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+
 import com.danny.media.library.model.Video;
 import com.danny.media.library.provider.MediaProviderFactory;
 import com.danny.media.library.provider.MediaProviderListener;
@@ -10,6 +14,11 @@ import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by dannywang on 2017/12/29.
@@ -20,6 +29,8 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
 
     private VideoProvider videoProvider;
     private VideoPlayer videoPlayer;
+
+    private PlayerModel playerModel = PlayerModel.SEQUENCE;
 
     private List<Video> videoList;
 
@@ -43,13 +54,34 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
             @Override
             public void onScanFinish() {
                 LogUtil.i(TAG,"onScanFinish");
-                videoList = videoProvider.getMediaList();
-                if (uiRefreshListener != null){
-                    uiRefreshListener.onRefreshSourceList(videoList);
-                }
+                Observable.just(1)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Integer>() {
+                            @Override
+                            public void accept(Integer integer) throws Exception {
+                                videoList = videoProvider.getMediaList();
+                                if (uiRefreshListener != null){
+                                    uiRefreshListener.onRefreshSourceList(videoList);
+                                }
+                            }
+                        });
+
             }
         });
-        videoProvider.loadMediaResources();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Observable.timer(1, TimeUnit.SECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        videoProvider.loadMediaResources();
+                    }
+                });
+        return super.onBind(intent);
     }
 
     //    PlayerService
@@ -94,18 +126,18 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
     }
 
     @Override
-    public void seekTo(int progress) {
-
+    public void seekTo(int mesc) {
+        videoPlayer.seekTo(mesc);
     }
 
     @Override
     public int getPlayProgress() {
-        return 0;
+        return videoPlayer.getPlayProgress();
     }
 
     @Override
     public boolean isPlaying() {
-        return false;
+        return videoPlayer.isPlaying();
     }
 
     @Override
@@ -115,12 +147,12 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
 
     @Override
     public void setPlayerModel(PlayerModel model) {
-
+        playerModel = model;
     }
 
     @Override
     public PlayerModel getPlayerModel() {
-        return null;
+        return playerModel;
     }
 
 //    PlayerScheduleListener

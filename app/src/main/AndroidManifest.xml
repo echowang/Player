@@ -24,11 +24,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.MainActivity">
-
-        </activity>
+        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.SecondActivity" />
 
         <service android:name="com.danny.media.library.service.music.MusicPlayerService" />
+        <service android:name="com.danny.media.library.service.video.VideoPlayerService" />
 
     </application>
 

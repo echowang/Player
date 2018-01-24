@@ -14,10 +14,10 @@ import java.util.List;
  * 正在播放ViewPager适配器，包含歌词和封面
  * Created by wcy on 2015/11/30.
  */
-public class PlayPagerAdapter extends PagerAdapter {
+public class MusicPlayAdapter extends PagerAdapter {
     private List<View> mViews;
 
-    public PlayPagerAdapter(List<View> views) {
+    public MusicPlayAdapter(List<View> views) {
         mViews = views;
     }
 

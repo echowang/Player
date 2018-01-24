@@ -27,6 +27,10 @@ public abstract class VideoProvider extends MediaProvider{
 
     @Override
     public void loadMediaResources() {
+        queryMediaResources();
 
+        if (mediaProviderListener != null){
+            mediaProviderListener.onScanFinish();
+        }
     }
 }

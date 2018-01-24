@@ -32,7 +32,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
     private int selectedPosition = 0;
     private boolean isPlaying = true;
 
-    private OnMusicItemClick onMusicItemClick;
+    private OnItemClickListener<Song> onMusicItemClick;
 
     public MusicListAdpter(Context context){
         this.mContext = context;
@@ -41,7 +41,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.recycler_item,parent,false);
+        View view = layoutInflater.inflate(R.layout.music_list_item,parent,false);
         RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view);
         return recyclerViewHolder;
     }
@@ -110,7 +110,7 @@ public class MusicListAdpter extends RecyclerView.Adapter {
         return -1;
     }
 
-    public void setOnMusicItemClick(OnMusicItemClick onMusicItemClick) {
+    public void setOnItemClickListener(OnItemClickListener<Song> onMusicItemClick) {
         this.onMusicItemClick = onMusicItemClick;
     }
 
@@ -185,14 +185,10 @@ public class MusicListAdpter extends RecyclerView.Adapter {
                 public void onClick(View view) {
                     LogUtil.d(TAG,"onClick");
                     if (onMusicItemClick != null){
-                        onMusicItemClick.onMusicItenClick(position,song);
+                        onMusicItemClick.onItenClick(position,song);
                     }
                 }
             });
         }
-    }
-
-    public interface OnMusicItemClick{
-        void onMusicItenClick(int position,Song song);
     }
 }

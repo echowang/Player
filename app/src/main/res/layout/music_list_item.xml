@@ -11,8 +11,8 @@
         android:padding="6dp">
 
         <ImageView android:id="@+id/item_music_album_icon"
-            android:layout_width="@dimen/recyclerview_item_icon_width"
-            android:layout_height="@dimen/recyclerview_item_icon_hight"
+            android:layout_width="@dimen/music_list_item_icon_width"
+            android:layout_height="@dimen/music_list_item_icon_hight"
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             android:src="@mipmap/default_artist"/>

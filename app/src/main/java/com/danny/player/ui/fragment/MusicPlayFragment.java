@@ -24,7 +24,7 @@ import com.danny.media.library.service.PlayerModel;
 import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
-import com.danny.player.adapter.PlayPagerAdapter;
+import com.danny.player.adapter.MusicPlayAdapter;
 import com.danny.player.application.PlayerApplication;
 import com.danny.player.glide.PlayerGlide;
 import com.danny.player.ui.widget.MusicAlbumCoverView;
@@ -126,7 +126,7 @@ public class MusicPlayFragment extends BaseFragment implements IServiceUIRefresh
                 .setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
         musicPlayViewPager.getIndicator()
                 .build();
-        musicPlayViewPager.setAdapter(new PlayPagerAdapter(mViewPagerContent));
+        musicPlayViewPager.setAdapter(new MusicPlayAdapter(mViewPagerContent));
     }
 
     private void initViewEvent(){

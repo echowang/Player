@@ -15,6 +15,7 @@ import com.danny.media.library.service.PlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.adapter.MusicListAdpter;
+import com.danny.player.adapter.OnItemClickListener;
 import com.danny.player.application.PlayerApplication;
 import com.danny.player.ui.widget.MusicListControllerBar;
 import com.danny.player.ui.widget.RecycleViewDivider;
@@ -27,7 +28,7 @@ import butterknife.BindView;
  * Created by tingw on 2018/1/15.
  */
 
-public class MusicMainFragment extends BaseFragment implements IServiceUIRefreshListener<Song>,MusicListAdpter.OnMusicItemClick, MusicListControllerBar.MusicControllerBarListener {
+public class MusicMainFragment extends BaseFragment implements IServiceUIRefreshListener<Song>,OnItemClickListener<Song>, MusicListControllerBar.MusicControllerBarListener {
     private final static String TAG = MusicMainFragment.class.getSimpleName();
     @BindView(R.id.music_main_recyclerview)
     RecyclerView mRecyclerView;
@@ -56,7 +57,7 @@ public class MusicMainFragment extends BaseFragment implements IServiceUIRefresh
         mRecyclerView.addItemDecoration(new RecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL));
         mRecyclerView.setLayoutManager(linearLayoutManager);
         musicListAdpter = new MusicListAdpter(getContext());
-        musicListAdpter.setOnMusicItemClick(this);
+        musicListAdpter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(musicListAdpter);
 
         musicListControllerBar.setControllerBarListener(this);
@@ -158,7 +159,7 @@ public class MusicMainFragment extends BaseFragment implements IServiceUIRefresh
     }
 
     @Override
-    public void onMusicItenClick(int position, Song song) {
+    public void onItenClick(int position, Song song) {
         LogUtil.d(TAG,"onClick : " + position);
         if (playerService == null){
             return;

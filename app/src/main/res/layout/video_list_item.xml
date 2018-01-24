@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/video_list_item_height">
+
+    <RelativeLayout android:id="@+id/vido_list_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/recyclerview_item_selector"
+        android:padding="6dp">
+
+        <ImageView android:id="@+id/video_item_thumbnail"
+            android:layout_width="@dimen/video_list_item_icon_width"
+            android:layout_height="@dimen/video_list_item_icon_hight"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/default_artist"/>
+
+        <TextView android:id="@+id/video_item_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/video_list_item_margin_left"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textSize="14sp"
+            android:text="@string/music_artist_default"/>
+
+        <TextView
+            android:id="@+id/video_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/video_item_thumbnail"
+            android:layout_toLeftOf="@id/video_item_duration"
+            android:layout_marginLeft="@dimen/video_list_item_margin_left"
+            android:layout_marginRight="@dimen/video_list_item_margin_right"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textSize="16sp"
+            android:text="@string/music_name_default"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -15,6 +15,7 @@ public class Video implements Serializable {
     private long fileSize;
     private int width;
     private int height;
+    private String thumbnail;
 
     public long getId() {
         return id;
@@ -80,6 +81,14 @@ public class Video implements Serializable {
         this.height = height;
     }
 
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Video && (getId() == ((Video) obj).getId());
@@ -87,7 +96,8 @@ public class Video implements Serializable {
 
     @Override
     public String toString() {
-        String temp = "id : " + id + " , title : " + title + " , fileName : " + fileName + " , path : " + path + " , fileSize : " + fileSize + " , duration : " + duration + " , width : " + width + " , height : " + height;
+        String temp = "id : " + id + " , title : " + title + " , fileName : " + fileName + " , path : " + path + " , fileSize : " + fileSize
+                + " , duration : " + duration + " , width : " + width + " , height : " + height + " , thumbnail : " + thumbnail;
         return temp;
     }
 }
