@@ -25,7 +25,8 @@
         </activity>
 
         <activity android:name=".ui.MainActivity" />
-        <activity android:name=".ui.SecondActivity" />
+        <activity android:name=".ui.MusicActivity" />
+        <activity android:name=".ui.VideoActivity" />
 
         <service android:name="com.danny.media.library.service.music.MusicPlayerService" />
         <service android:name="com.danny.media.library.service.video.VideoPlayerService" />

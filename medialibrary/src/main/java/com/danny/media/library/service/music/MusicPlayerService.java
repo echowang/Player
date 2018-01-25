@@ -52,20 +52,14 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtil.i(TAG,"onStartCommand");
 
-        MediaScannerConnection.scanFile(this,
-                new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator }, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        Observable.just(1)
-                                .subscribeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Consumer<Integer>() {
-                                    @Override
-                                    public void accept(Integer integer) throws Exception {
-                                        if (musicProvider != null){
-                                            musicProvider.loadMediaResources();
-                                        }
-                                    }
-                                });
+        Observable.just(1)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        if (musicProvider != null){
+                            musicProvider.loadMediaResources();
+                        }
                     }
                 });
 
@@ -282,7 +276,12 @@ public class MusicPlayerService extends PlayerService<Song> implements PlayerSch
         return autoPlay;
     }
 
-//    PlayerScheduleListener
+    @Override
+    public void stopPlayerService() {
+        this.stopSelf();
+    }
+
+    //    PlayerScheduleListener
     @Override
     public void onPublish(int progress) {
         if (uiRefreshListener != null){

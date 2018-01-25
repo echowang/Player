@@ -1,24 +1,25 @@
 package com.danny.player.ui;
 
 import android.Manifest;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.widget.TextView;
 
-import com.danny.media.library.service.music.MusicPlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
+import com.danny.player.application.PlayerApplication;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -60,7 +61,7 @@ public class SplashActivity extends BaseAcivity {
 
         LogUtil.d(TAG,"checkSelfPermission notGrantedPermissions : " + notGrantedPermissions.size());
         if (notGrantedPermissions.isEmpty()){
-            startMusicService();
+            startPlayerService();
         }else{
             ActivityCompat.requestPermissions(this,notGrantedPermissions.toArray(new String[notGrantedPermissions.size()]), PERMISSION_REQUEST_CODE);
         }
@@ -82,28 +83,36 @@ public class SplashActivity extends BaseAcivity {
 
             LogUtil.d(TAG,"onRequestPermissionsResult notGrantedPermissions : " + notGrantedPermissions.size());
             if (notGrantedPermissions.isEmpty()){
-                startMusicService();
+                startPlayerService();
             }else {
                 finish();
             }
         }
     }
 
-    private void startMusicService(){
-        LogUtil.d(TAG,"startMusicMainActivity");
-        if (!serviceIsRunning(MusicPlayerService.class)){
-            Intent intent = new Intent(this, MusicPlayerService.class);
-            startService(intent);
-        }
+    private void startPlayerService(){
+        LogUtil.d(TAG,"startPlayerService");
 
-        Observable.timer(3,TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        startMusicMainActivity();
+        MediaScannerConnection.scanFile(this,
+                new String[] { Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator }, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Observable.just(1)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Consumer<Integer>() {
+                                    @Override
+                                    public void accept(Integer aLong) throws Exception {
+                                        PlayerApplication.getApplication().startMusicPlayerService();
+                                        PlayerApplication.getApplication().startVideoPlayerService();
+                                        startMusicMainActivity();
+                                    }
+                                });
                     }
                 });
+
+
+
+
     }
 
     private void startMusicMainActivity(){
@@ -111,29 +120,5 @@ public class SplashActivity extends BaseAcivity {
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    /**
-     * 判断Service是否已经启动
-     * @param clazz
-     * @return
-     */
-    private boolean serviceIsRunning(Class clazz) {
-        if (clazz == null){
-            return false;
-        }
-        String className = clazz.getName();
-        ActivityManager myManager = (ActivityManager) this
-                .getApplicationContext().getSystemService(
-                        Context.ACTIVITY_SERVICE);
-        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
-                .getRunningServices(30);
-        for (int i = 0; i < runningService.size(); i++) {
-            if (runningService.get(i).service.getClassName().toString()
-                    .equals(className)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

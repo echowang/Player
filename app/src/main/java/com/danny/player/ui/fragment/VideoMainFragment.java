@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,8 @@ import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.adapter.OnItemClickListener;
 import com.danny.player.adapter.VideoListAdapter;
+import com.danny.player.application.PlayerApplication;
+import com.danny.player.ui.VideoActivity;
 import com.danny.player.ui.widget.RecycleViewDivider;
 
 import java.util.List;
@@ -33,7 +36,7 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
     RecyclerView mRecyclerView;
 
     private VideoServiceConnection serviceConnection;
-    private PlayerService<Video> playerService;
+    private VideoPlayerService playerService;
 
     private VideoListAdapter videoListAdapter;
 
@@ -108,7 +111,12 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
     public void onItenClick(int position, Video video) {
         LogUtil.i(TAG,"onItenClick");
         if (video != null){
-            LogUtil.i(TAG,"title : " + video.getTitle());
+            Intent intent = new Intent(getContext(), VideoActivity.class);
+            intent.putExtra(VideoActivity.PARAM_FRAGMENT,VideoActivity.VIDEO_PLAY_FRAGMENT);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(VideoActivity.PARAM_VIDEO,video);
+            intent.putExtra(VideoActivity.PARAM_BUNNDLE,bundle);
+            openActivity(intent);
         }
     }
 
@@ -117,7 +125,8 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             PlayerService.PlayerBinder playerBinder = (PlayerService.PlayerBinder) iBinder;
-            playerService = playerBinder.getPlayerService();
+            playerService = (VideoPlayerService) playerBinder.getPlayerService();
+            PlayerApplication.getApplication().setVideoPlayerService(playerService);
             playerService.registerUIRefreshListener(VideoMainFragment.this);
             List<Video> videos = playerService.getPlaySourceList();
             updateVideoSource(videos);

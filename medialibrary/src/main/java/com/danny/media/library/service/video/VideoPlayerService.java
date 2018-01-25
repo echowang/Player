@@ -70,9 +70,8 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
         });
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Observable.timer(1, TimeUnit.SECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
@@ -81,38 +80,39 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
                         videoProvider.loadMediaResources();
                     }
                 });
-        return super.onBind(intent);
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     //    PlayerService
     @Override
     public List<Video> getPlaySourceList() {
-        return null;
+        return videoList;
     }
 
     @Override
     public Video getPlaySource() {
-        return null;
+        return videoPlayer.getPlaySource();
     }
 
     @Override
     public void play(Video video) {
-
+        videoPlayer.play(video);
     }
 
     @Override
     public void pause() {
-
+        videoPlayer.pause();
     }
 
     @Override
     public void resume() {
-
+        videoPlayer.resume();
     }
 
     @Override
     public void stop() {
-
+        videoPlayer.stop();
     }
 
     @Override
@@ -155,24 +155,44 @@ public class VideoPlayerService extends PlayerService<Video> implements PlayerSc
         return playerModel;
     }
 
-//    PlayerScheduleListener
+    @Override
+    public void stopPlayerService() {
+        this.stopSelf();
+    }
+
+    //    PlayerScheduleListener
     @Override
     public void onPublish(int progress) {
-
+        if (uiRefreshListener != null){
+            uiRefreshListener.onPublish(getPlaySource(),progress);
+        }
     }
 
     @Override
     public void onBufferingUpdate(int percent) {
-
+        if (uiRefreshListener != null){
+            uiRefreshListener.onBufferingUpdate(getPlaySource(),percent);
+        }
     }
 
     @Override
     public void OnCompletion() {
-
+        next();
     }
 
     @Override
     public void OnChangeSource(Video video) {
+        if (uiRefreshListener != null){
+            uiRefreshListener.onSourceChange(video);
+        }
+    }
 
+    /**
+     * 用于获取UI界面上的SurfaceView
+     * 需要在调用play方法前调用
+     * @param surfaceViewCreater
+     */
+    public void setSurfaceViewCreater(VideoSurfaceViewCreater surfaceViewCreater){
+        videoPlayer.setSurfaceViewCreater(surfaceViewCreater);
     }
 }

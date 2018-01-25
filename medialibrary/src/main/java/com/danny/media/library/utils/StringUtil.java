@@ -32,7 +32,7 @@ public class StringUtil {
     public static String durationToTimeString(long duration){
         int m = (int) (duration / DateUtils.MINUTE_IN_MILLIS);
         int s = (int) ((duration / DateUtils.SECOND_IN_MILLIS) % 60);
-        int h = (int) ((duration / DateUtils.SECOND_IN_MILLIS) / 60);
+        int h = (int) ((duration / DateUtils.MINUTE_IN_MILLIS) / 60);
         String mm = String.format(Locale.getDefault(), "%02d", m);
         String ss = String.format(Locale.getDefault(), "%02d", s);
         if (h == 0){

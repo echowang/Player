@@ -17,6 +17,7 @@ import com.danny.player.R;
 import com.danny.player.adapter.MusicListAdpter;
 import com.danny.player.adapter.OnItemClickListener;
 import com.danny.player.application.PlayerApplication;
+import com.danny.player.ui.MusicActivity;
 import com.danny.player.ui.widget.MusicListControllerBar;
 import com.danny.player.ui.widget.RecycleViewDivider;
 
@@ -66,7 +67,6 @@ public class MusicMainFragment extends BaseFragment implements IServiceUIRefresh
         if (playerService == null){
             bindPlayerService();
         }else{
-            playerService.registerUIRefreshListener(MusicMainFragment.this);
             List<Song> songList = playerService.getPlaySourceList();
             setMusicListData(songList);
         }
@@ -74,11 +74,21 @@ public class MusicMainFragment extends BaseFragment implements IServiceUIRefresh
 
     @Override
     public void onResume() {
+        LogUtil.i(TAG,"onResume");
         super.onResume();
-
         if (playerService != null){
+            playerService.registerUIRefreshListener(MusicMainFragment.this);
             Song song = playerService.getPlaySource();
             updateMusicInfo(song);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        LogUtil.i(TAG,"onPause");
+        super.onPause();
+        if (playerService != null){
+            playerService.unRegisterUIRefreshListener(MusicMainFragment.this);
         }
     }
 
@@ -198,8 +208,9 @@ public class MusicMainFragment extends BaseFragment implements IServiceUIRefresh
 
     @Override
     public void OnControllerBarClick() {
-        BaseFragment fragment = new MusicPlayFragment();
-        startFragment(fragment);
+        Intent intent = new Intent(getContext(), MusicActivity.class);
+        intent.putExtra(MusicActivity.PARAM_FRAGMENT, MusicActivity.MUSIC_PLAY_FRAGMENT);
+        openActivity(intent);
     }
 
     private void updateMusicInfo(Song song){
@@ -234,9 +245,6 @@ public class MusicMainFragment extends BaseFragment implements IServiceUIRefresh
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             LogUtil.i(TAG,"onServiceDisconnected");
-            if (playerService != null){
-                playerService.unRegisterUIRefreshListener(MusicMainFragment.this);
-            }
         }
 
         @Override

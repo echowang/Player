@@ -1,8 +1,8 @@
 package com.danny.player.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.ui.fragment.BaseFragment;
 import com.danny.player.ui.fragment.MusicMainFragment;
@@ -27,7 +26,7 @@ import butterknife.BindView;
  * Created by tingw on 2018/1/3.
  */
 
-public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEventListener{
+public class MainActivity extends BaseAcivity {
     private final static String TAG = MainActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
@@ -40,6 +39,10 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
     private String[] lvs;
     private ArrayAdapter arrayAdapter;
 
+    private BaseFragment cureentFragment;
+    private BaseFragment musicMainFragment;
+    private BaseFragment videoMainFragment;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
@@ -51,6 +54,11 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
 
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
 
+        musicMainFragment = new MusicMainFragment();
+        musicMainFragment.setFragmentEventListener(this);
+        videoMainFragment = new VideoMainFragment();
+        videoMainFragment.setFragmentEventListener(this);
+
         lvs = new String[]{getString(R.string.player_music), getString(R.string.player_video), getString(R.string.player_picture)};
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, lvs);
         menuListView.setAdapter(arrayAdapter);
@@ -59,16 +67,12 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i){
                     case 0:{
-                        clearFragment();
-                        BaseFragment musicMainFragment = new MusicMainFragment();
-                        startFragment(musicMainFragment);
+                        openFragment(musicMainFragment);
                         drawerLayout.closeDrawers();
                         break;
                     }
                     case 1:{
-                        clearFragment();
-                        BaseFragment videoMainFragment = new VideoMainFragment();
-                        startFragment(videoMainFragment);
+                        openFragment(videoMainFragment);
                         drawerLayout.closeDrawers();
                         break;
                     }
@@ -76,8 +80,7 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
             }
         });
 
-        BaseFragment musicMainFragment = new MusicMainFragment();
-        startFragment(musicMainFragment);
+        openFragment(musicMainFragment);
     }
 
     @Override
@@ -93,6 +96,7 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
         super.onDestroy();
     }
 
+//    FragmentEventListener
     @Override
     public void setToolBarTitle(String title) {
         if (TextUtils.isEmpty(title)){
@@ -107,23 +111,34 @@ public class MainActivity extends BaseAcivity implements BaseFragment.FragmentEv
     }
 
     @Override
-    public void startFragment(BaseFragment fragment) {
+    public void openFragment(BaseFragment fragment) {
         if (fragment != null){
-            fragment.setFragmentEventListener(this);
-
+            if (fragment.equals(cureentFragment)){
+                return;
+            }
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.fragment_slide_up,R.anim.fragment_slide_down,R.anim.fragment_slide_up,R.anim.fragment_slide_down);
-            fragmentTransaction.replace(R.id.fragment_container,fragment,fragment.getClass().getSimpleName());
+
+            if (!fragment.isAdded()){
+                fragmentTransaction.add(R.id.fragment_container,fragment,fragment.getClass().getSimpleName());
+                fragmentTransaction.show(fragment);
+                cureentFragment = fragment;
+            }else{
+                fragmentTransaction.hide(cureentFragment);
+                fragmentTransaction.show(fragment);
+                cureentFragment = fragment;
+            }
             fragmentTransaction.addToBackStack("player");
             fragmentTransaction.commitAllowingStateLoss();
+
         }
     }
 
-    private void clearFragment(){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++){
-            fragmentManager.popBackStack();
+    @Override
+    public void openActivity(Intent intent) {
+        if (intent != null){
+            startActivity(intent);
         }
     }
 }

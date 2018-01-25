@@ -78,18 +78,16 @@ public class MusicPlayFragment extends BaseFragment implements IServiceUIRefresh
         initVolumeBar();
 
         playerService = PlayerApplication.getApplication().getMusicPlayerService();
-        playerService.registerUIRefreshListener(this);
-    }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         audioVolumeBroadcast = AudioVolumeBroadcast.registerAudioVolumeBroadcast(getContext(),this);
     }
 
     @Override
     public void onResume() {
+        LogUtil.i(TAG,"onResume");
         super.onResume();
+
+        playerService.registerUIRefreshListener(this);
 
         Song song = playerService.getPlaySource();
         updateMusicInfo(song);
@@ -98,7 +96,15 @@ public class MusicPlayFragment extends BaseFragment implements IServiceUIRefresh
     }
 
     @Override
+    public void onPause() {
+        LogUtil.i(TAG,"onPause");
+        super.onPause();
+        playerService.unRegisterUIRefreshListener(this);
+    }
+
+    @Override
     public void onDestroyView() {
+        LogUtil.i(TAG,"onDestroyView");
         super.onDestroyView();
         AudioVolumeBroadcast.unRegisterAudioVolumeBroadcast(getContext(),audioVolumeBroadcast);
     }

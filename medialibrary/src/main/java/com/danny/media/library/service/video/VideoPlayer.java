@@ -6,17 +6,21 @@ import com.danny.media.library.model.Video;
 import com.danny.media.library.service.Player;
 import com.danny.media.library.service.PlayerScheduleListener;
 import com.danny.media.library.service.PlayerStaue;
+import com.danny.media.library.utils.LogUtil;
 
 /**
  * Created by tingw on 2018/1/22.
  */
 
 public class VideoPlayer implements Player<Video>, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener,MediaPlayer.OnCompletionListener {
+    private final static String TAG = VideoPlayer.class.getSimpleName();
     private MediaPlayer mPlayer;
     private PlayerStaue playerStaue = PlayerStaue.STATE_IDLE;    //播放器的状态
     private Video playVideo;
 
     private PlayerScheduleListener<Video> scheduleListener;
+
+    private VideoSurfaceViewCreater surfaceViewCreater;
 
     public VideoPlayer(PlayerScheduleListener<Video> scheduleListener){
         this.scheduleListener = scheduleListener;
@@ -28,22 +32,27 @@ public class VideoPlayer implements Player<Video>, MediaPlayer.OnBufferingUpdate
 
     @Override
     public void play(Video video) {
-        playVideo = video;
+        if (surfaceViewCreater != null){
+            playVideo = video;
+            playerStaue = PlayerStaue.STATE_PREPARING;
+        }else{
+            LogUtil.e(TAG,"surfaceViewCreater is null");
+        }
     }
 
     @Override
     public void pause() {
-
+        playerStaue = PlayerStaue.STATE_PAUSE;
     }
 
     @Override
     public void resume() {
-
+        playerStaue = PlayerStaue.STATE_PLAYING;
     }
 
     @Override
     public void stop() {
-
+        playerStaue = PlayerStaue.STATE_IDLE;
     }
 
     @Override
@@ -82,17 +91,25 @@ public class VideoPlayer implements Player<Video>, MediaPlayer.OnBufferingUpdate
     }
 
     @Override
-    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
-
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+        if (scheduleListener != null){
+            scheduleListener.onBufferingUpdate(percent);
+        }
     }
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
+        if (scheduleListener != null){
+            scheduleListener.OnCompletion();
+        }
     }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
+        playerStaue = PlayerStaue.STATE_PLAYING;
+    }
 
+    public void setSurfaceViewCreater(VideoSurfaceViewCreater surfaceViewCreater){
+        this.surfaceViewCreater = surfaceViewCreater;
     }
 }
