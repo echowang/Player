@@ -58,7 +58,29 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
         videoListAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(videoListAdapter);
 
-        bindVideoService();
+        playerService = PlayerApplication.getApplication().getVideoPlayerService();
+        if (playerService == null){
+            bindVideoService();
+        }else{
+            List<Video> videoList = playerService.getPlaySourceList();
+            updateVideoSource(videoList);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (playerService != null){
+            playerService.registerUIRefreshListener(this);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (playerService != null){
+            playerService.unRegisterUIRefreshListener(VideoMainFragment.this);
+        }
     }
 
     @Override
@@ -134,9 +156,7 @@ public class VideoMainFragment extends BaseFragment implements IServiceUIRefresh
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            if (playerService != null){
-                playerService.unRegisterUIRefreshListener(VideoMainFragment.this);
-            }
+
         }
 
         @Override

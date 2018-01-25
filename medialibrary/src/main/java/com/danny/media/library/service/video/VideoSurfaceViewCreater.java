@@ -1,5 +1,6 @@
 package com.danny.media.library.service.video;
 
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
@@ -7,5 +8,5 @@ import android.view.SurfaceView;
  */
 
 public interface VideoSurfaceViewCreater {
-    SurfaceView onCreaterSurfaceView();
+    SurfaceHolder onCreaterSurfaceHolder();
 }
