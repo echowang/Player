@@ -13,7 +13,11 @@ import com.danny.player.R;
 import com.danny.player.application.PlayerApplication;
 import com.danny.player.ui.VideoActivity;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by tingw on 2018/1/25.
@@ -26,6 +30,7 @@ public class VideoPlayFragment extends BaseFragment implements VideoSurfaceViewC
     VideoSurfaceView videoSurfaceView;
 
     private VideoPlayerService playerService;
+    private Video playVideo;
 
     @Override
     protected int getLayout() {
@@ -40,12 +45,32 @@ public class VideoPlayFragment extends BaseFragment implements VideoSurfaceViewC
         playerService.setSurfaceViewCreater(this);
 
         Bundle arguments = getArguments();
-        Video video = (Video) arguments.getSerializable(VideoActivity.PARAM_VIDEO);
-        if (video != null){
-            LogUtil.i(TAG,"title : " + video.getTitle());
-            setToolBarTitle(video.getTitle());
+        playVideo = (Video) arguments.getSerializable(VideoActivity.PARAM_VIDEO);
+        if (playVideo != null){
+            LogUtil.i(TAG,"title : " + playVideo.getTitle());
+            setToolBarTitle(playVideo.getTitle());
+        }
+    }
 
-            playerService.play(video);
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Observable.timer(1, TimeUnit.SECONDS)
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        playerService.play(playVideo);
+                    }
+                });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (playerService != null){
+            playerService.stop();
         }
     }
 

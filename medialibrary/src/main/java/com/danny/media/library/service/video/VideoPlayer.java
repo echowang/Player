@@ -70,6 +70,9 @@ public class VideoPlayer implements Player<Video>, MediaPlayer.OnBufferingUpdate
 
     @Override
     public void stop() {
+        mPlayer.stop();
+//        mPlayer.release();
+        playVideo = null;
         playerStaue = PlayerStaue.STATE_IDLE;
     }
 

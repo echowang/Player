@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.danny.player.R;
+import com.danny.player.application.PlayerApplication;
 import com.danny.player.ui.fragment.BaseFragment;
 import com.danny.player.ui.fragment.MusicMainFragment;
 import com.danny.player.ui.fragment.VideoMainFragment;
@@ -72,6 +73,7 @@ public class MainActivity extends BaseAcivity {
                         break;
                     }
                     case 1:{
+                        PlayerApplication.getApplication().getMusicPlayerService().stop();
                         openFragment(videoMainFragment);
                         drawerLayout.closeDrawers();
                         break;

@@ -73,9 +73,9 @@ public class MusicPlayer implements Player<Song>, MediaPlayer.OnCompletionListen
 
     @Override
     public void stop() {
-        pause();
+        mPlayer.stop();
+//        mPlayer.release();
         playSong = null;
-        mPlayer.reset();
         playerStaue = PlayerStaue.STATE_IDLE;
         mHandler.removeCallbacks(mPublishRunnable);
     }
