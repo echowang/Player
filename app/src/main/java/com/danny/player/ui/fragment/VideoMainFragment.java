@@ -9,10 +9,10 @@ import android.os.IBinder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.danny.media.library.model.Video;
-import com.danny.media.library.service.IServiceUIRefreshListener;
-import com.danny.media.library.service.PlayerService;
-import com.danny.media.library.service.video.VideoPlayerService;
+import com.danny.media.library.video.model.Video;
+import com.danny.media.library.player.IServiceUIRefreshListener;
+import com.danny.media.library.player.PlayerService;
+import com.danny.media.library.video.player.VideoPlayerService;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.player.R;
 import com.danny.player.adapter.OnItemClickListener;

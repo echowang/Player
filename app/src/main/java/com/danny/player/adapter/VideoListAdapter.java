@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.danny.media.library.model.Video;
+import com.danny.media.library.video.model.Video;
 import com.danny.media.library.utils.StringUtil;
 import com.danny.player.R;
 import com.danny.player.glide.PlayerGlide;

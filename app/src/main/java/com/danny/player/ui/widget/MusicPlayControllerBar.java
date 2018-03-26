@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.danny.media.library.model.Song;
-import com.danny.media.library.service.PlayerModel;
+import com.danny.media.library.music.model.Song;
+import com.danny.media.library.player.PlayerModel;
 import com.danny.media.library.utils.LogUtil;
 import com.danny.media.library.utils.StringUtil;
 import com.danny.player.R;

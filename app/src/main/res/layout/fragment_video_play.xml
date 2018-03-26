@@ -34,7 +34,7 @@
             android:src="@drawable/play_btn_next_selector" />
     </RelativeLayout>
 
-    <com.danny.media.library.service.video.VideoSurfaceView
+    <SurfaceView
         android:id="@+id/video_play_surfaceview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

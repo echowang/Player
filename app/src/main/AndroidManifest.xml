@@ -28,8 +28,8 @@
         <activity android:name=".ui.MusicActivity" />
         <activity android:name=".ui.VideoActivity" />
 
-        <service android:name="com.danny.media.library.service.music.MusicPlayerService" />
-        <service android:name="com.danny.media.library.service.video.VideoPlayerService" />
+        <service android:name="com.danny.media.library.music.player.MusicPlayerService" />
+        <service android:name="com.danny.media.library.video.player.VideoPlayerService" />
 
     </application>
 

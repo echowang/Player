@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.multidex.MultiDex;
 
-import com.danny.media.library.model.Song;
-import com.danny.media.library.service.PlayerService;
-import com.danny.media.library.service.music.MusicPlayerService;
-import com.danny.media.library.service.video.VideoPlayerService;
+import com.danny.media.library.music.model.Song;
+import com.danny.media.library.player.PlayerService;
+import com.danny.media.library.music.player.MusicPlayerService;
+import com.danny.media.library.video.player.VideoPlayerService;
 
 import java.util.ArrayList;
 
