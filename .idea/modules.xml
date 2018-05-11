@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Player.iml" filepath="$PROJECT_DIR$/.idea/Player.iml" />
-      <module fileurl="file://C:\Users\tingw\Works\Player\Player.iml" filepath="C:\Users\tingw\Works\Player\Player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HWMedia.iml" filepath="$PROJECT_DIR$/HWMedia.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/medialibrary/medialibrary.iml" filepath="$PROJECT_DIR$/medialibrary/medialibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/videoplayer/videoplayer.iml" filepath="$PROJECT_DIR$/videoplayer/videoplayer.iml" />
     </modules>
   </component>
 </project>

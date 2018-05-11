@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <cn.com.hwtc.videoplayer.widget.VideoInfoView
+        android:id="@+id/viewInfoView"
+        android:layout_width="@dimen/view_size_265"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/view_size_61"
+        android:layout_marginStart="@dimen/view_size_123"/>
+    
+    <cn.com.hwtc.videoplayer.widget.VideoView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/view_size_430"
+        android:layout_marginTop="@dimen/view_size_61"
+        android:layout_marginBottom="@dimen/view_size_40"
+        android:layout_marginEnd="@dimen/view_size_50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/video_view_background"/>
+
+</android.support.constraint.ConstraintLayout>

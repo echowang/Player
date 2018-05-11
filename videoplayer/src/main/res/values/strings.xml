@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">VideoPlayer</string>
+
+    <string name="play_video_name">文件名: </string>
+    <string name="play_video_time">时长: </string>
+    <string name="play_video_resolution">分辨率: </string>
+    <string name="play_video_size">文件大小: </string>
+    <string name="media_no_device">无可用设备</string>
+    <string name="no_find_video">未知</string>
+
+    <string name="inch_ono_and_one">1 : 1</string>
+    <string name="inch_four_and_three">4 : 3</string>
+    <string name="inch_sixteen_and_nine">16 : 9</string>
+    <string name="inch_full">FULL</string>
+</resources>
