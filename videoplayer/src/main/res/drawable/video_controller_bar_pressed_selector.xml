@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- pressed -->
+    <item android:drawable="@mipmap/video_controller_bar_btn_pressed" android:state_pressed="true"></item>
+    <item android:drawable="@mipmap/video_controller_bar_btn_pressed" android:state_focused="true"></item>
+    <!--<item android:drawable="@drawable/bg_press" android:state_selected="true"></item>-->
+    <!-- default -->
+    <item>
+        <shape>
+            <solid android:color="#00000000" />
+            <corners android:radius="50dp" />
+        </shape>
+    </item>
+</selector>

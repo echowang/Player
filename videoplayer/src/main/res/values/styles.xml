@@ -25,4 +25,14 @@
         <item name="android:ellipsize">middle</item>
     </style>
 
+    <style name="video_controller_bar_button">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/view_size_60</item>
+        <item name="android:background">@drawable/video_controller_bar_pressed_selector</item>
+        <item name="android:padding">@dimen/view_size_10</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:focusable">true</item>
+        <!--<item name="android:focusableInTouchMode">true</item>-->
+    </style>
+
 </resources>

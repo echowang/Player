@@ -7,4 +7,9 @@
     <color name="video_info_text_name">#afebee</color>
     <color name="video_info_text">#6A97A4</color>
     <color name="video_view_background">#000000</color>
+
+    <color name="video_controller_bar_seekbar_background">#d0e4e4</color>
+    <color name="video_controller_bar_seekbar_progress">#7EFCB7</color>
+    <color name="video_controller_bar_text_color">#ffffff</color>
+    <color name="video_top_bar_text_color">#ffffff</color>
 </resources>

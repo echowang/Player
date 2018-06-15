@@ -2,7 +2,9 @@ package cn.com.hwtc.videoplayer.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.widget.LinearLayout
+import cn.com.hwtc.videoplayer.R
 
 class VideoControllBar : LinearLayout {
     constructor(context: Context) : super(context) {
@@ -18,6 +20,7 @@ class VideoControllBar : LinearLayout {
     }
 
     fun initView(context: Context){
-
+        val layoutInflater = LayoutInflater.from(context)
+        layoutInflater.inflate(R.layout.player_video_controller_bar,this,true)
     }
 }

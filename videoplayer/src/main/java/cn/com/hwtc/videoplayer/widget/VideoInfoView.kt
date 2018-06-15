@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.widget_video_information.view.*
 
 class VideoInfoView : LinearLayout {
 
+
     constructor(context: Context) : super(context) {
         initView(context)
     }
@@ -33,4 +34,6 @@ class VideoInfoView : LinearLayout {
         text_video_resolution.text = video.parseResolutionToString()
         text_video_size.text = video.parseSizeToString()
     }
+
+
 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/video_play_info"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/view_size_30"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@mipmap/video_controller_bar_top">
+        <TextView android:id="@+id/video_play_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00:00"
+            android:textColor="@color/video_controller_bar_text_color"
+            android:textSize="@dimen/text_size_15"
+            android:layout_marginStart="@dimen/view_size_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView android:id="@+id/video_play_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00:00"
+            android:textColor="@color/video_controller_bar_text_color"
+            android:textSize="@dimen/text_size_15"
+            android:layout_marginEnd="@dimen/text_size_4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_size_4"
+            android:layout_marginEnd="@dimen/text_size_4"
+            app:layout_constraintLeft_toRightOf="@id/video_play_time"
+            app:layout_constraintRight_toLeftOf="@id/video_play_total"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:progressDrawable="@drawable/video_controller_bar_progress"
+            android:thumb="@mipmap/video_controller_bar_icon_seekbar_thumb"
+            android:thumbOffset="0dp"
+            android:indeterminate="false"
+            android:maxHeight="@dimen/view_size_3"
+            android:minHeight="@dimen/view_size_3"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="@dimen/view_size_50"
+        app:layout_constraintTop_toBottomOf="@id/video_play_info"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@mipmap/video_controller_bar_bottom">
+        <ImageButton
+            android:id="@+id/video_list"
+            style="@style/video_controller_bar_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/video_controller_bar_list_selector"/>
+
+        <ImageButton
+            android:id="@+id/video_full_screen"
+            style="@style/video_controller_bar_button"
+            app:layout_constraintStart_toEndOf="@id/video_list"
+            app:layout_constraintTop_toTopOf="@id/video_list"
+            android:src="@drawable/video_controller_bar_full_selector"/>
+
+        <ImageButton
+            android:id="@+id/video_play"
+            style="@style/video_controller_bar_button"
+            app:layout_constraintTop_toTopOf="@id/video_full_screen"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/video_controller_bar_play_selector"/>
+
+        <ImageButton
+            android:id="@+id/video_pre"
+            style="@style/video_controller_bar_button"
+            app:layout_constraintRight_toLeftOf="@id/video_play"
+            app:layout_constraintTop_toTopOf="@id/video_play"
+            android:src="@drawable/video_controller_bar_pre_selector"/>
+
+        <ImageButton
+            android:id="@+id/video_next"
+            style="@style/video_controller_bar_button"
+            app:layout_constraintStart_toEndOf="@id/video_play"
+            app:layout_constraintTop_toTopOf="@id/video_play"
+            android:src="@drawable/video_controller_bar_next_selector"/>
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>

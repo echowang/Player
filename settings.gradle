@@ -1,1 +1,1 @@
-include ':app', ':medialibrary', ':videoplayer'
+include ':app', ':medialibrary', ':videoplayer', ':musicplayer'
